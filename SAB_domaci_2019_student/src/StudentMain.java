@@ -1,9 +1,13 @@
 import operations.*;
+import student.om16076_CityOperations;
+import student.jdbc.DB;
+import student.jdbc.JDBC;
+
 import org.junit.Test;
+
 import tests.TestHandler;
 import tests.TestRunner;
 
-import java.util.Calendar;
 
 public class StudentMain {
 
@@ -11,11 +15,16 @@ public class StudentMain {
 
         ArticleOperations articleOperations = null; // Change this for your implementation (points will be negative if interfaces are not implemented).
         BuyerOperations buyerOperations = null;
-        CityOperations cityOperations = null;
+        CityOperations cityOperations = new om16076_CityOperations();
         GeneralOperations generalOperations = null;
         OrderOperations orderOperations = null;
         ShopOperations shopOperations = null;
         TransactionOperations transactionOperations = null;
+             
+        int i = cityOperations.createCity("KiM");
+        System.out.println(i);
+        
+        
 //
 //        Calendar c = Calendar.getInstance();
 //        c.clear();
@@ -29,7 +38,7 @@ public class StudentMain {
 //        if(c.equals(c2)) System.out.println("jednako");
 //        else System.out.println("nije jednako");
 
-        TestHandler.createInstance(
+        /*TestHandler.createInstance(
                 articleOperations,
                 buyerOperations,
                 cityOperations,
@@ -39,6 +48,6 @@ public class StudentMain {
                 transactionOperations
         );
 
-        TestRunner.runTests();
+        TestRunner.runTests();*/
     }
 }

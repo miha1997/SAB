@@ -1,10 +1,10 @@
 import operations.*;
 import student.om160076_ArticleOperations;
 import student.om160076_BuyerOperations;
+import student.om160076_GeneralOperations;
 import student.om160076_ShopOperations;
 import student.om16076_CityOperations;
 import student.jdbc.DB;
-import student.jdbc.JDBC;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -23,14 +23,21 @@ public class StudentMain {
         ArticleOperations articleOperations = new om160076_ArticleOperations(); // Change this for your implementation (points will be negative if interfaces are not implemented).
         BuyerOperations buyerOperations = new om160076_BuyerOperations();
         CityOperations cityOperations = new om16076_CityOperations();
-        GeneralOperations generalOperations = null;
+        GeneralOperations generalOperations = new om160076_GeneralOperations();
         OrderOperations orderOperations = null;
         ShopOperations shopOperations = new om160076_ShopOperations();
         TransactionOperations transactionOperations = null;
              
-        BigDecimal res = buyerOperations.increaseCredit(3, BigDecimal.valueOf(35.7));
-        System.out.println(res.toString());
+        /*int i = buyerOperations.createOrder(3);
+        //System.out.println(i);
         
+        List<Integer> list = buyerOperations.getOrders(1);
+        
+        for(Integer li : list)
+        	System.out.println(li);
+        
+        BigDecimal res = buyerOperations.getCredit(1);
+        System.out.println(res.floatValue());*/
 //
 //        Calendar c = Calendar.getInstance();
 //        c.clear();
@@ -44,7 +51,7 @@ public class StudentMain {
 //        if(c.equals(c2)) System.out.println("jednako");
 //        else System.out.println("nije jednako");
 
-        /*TestHandler.createInstance(
+        TestHandler.createInstance(
                 articleOperations,
                 buyerOperations,
                 cityOperations,
@@ -54,6 +61,6 @@ public class StudentMain {
                 transactionOperations
         );
 
-        TestRunner.runTests();*/
+        TestRunner.runTests();
     }
 }

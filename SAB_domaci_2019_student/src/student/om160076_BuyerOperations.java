@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.LinkedList;
 import java.util.List;
 
 import java.util.logging.Level;
@@ -128,20 +129,68 @@ public class om160076_BuyerOperations implements BuyerOperations {
 
 	@Override
 	public int createOrder(int buyerId) {
-		// TODO Auto-generated method stub
-		return 0;
+		Connection connection=DB.getInstance().getConnection();
+        String insertOrder="insert into Narudzbina values('created',?,null,null,null,-1,null,null)";
+        
+        try ( Statement statement=connection.createStatement();
+            PreparedStatement psOrder=connection.prepareStatement(insertOrder, PreparedStatement.RETURN_GENERATED_KEYS);){
+        	            
+        	//insert new order
+        	psOrder.setInt(1, buyerId);
+        	psOrder.executeUpdate();
+            ResultSet rs = psOrder.getGeneratedKeys();
+            
+            rs.next();
+            return rs.getInt(1);
+            
+        } catch (SQLException ex) {
+            //Logger.getLogger(om160076_BuyerOperations.class.getName()).log(Level.SEVERE, null, ex);
+            return -1;
+        }
 	}
 
 	@Override
 	public List<Integer> getOrders(int buyerId) {
-		// TODO Auto-generated method stub
-		return null;
+		Connection connection=DB.getInstance().getConnection();
+        String getAllOrders="select IdNarudzbina from Narudzbina where IdKupac = ?";
+        
+        try ( Statement statement=connection.createStatement();
+        	PreparedStatement psSelect=connection.prepareStatement(getAllOrders);){
+        	
+        	psSelect.setInt(1, buyerId);
+        	ResultSet rs = psSelect.executeQuery();
+        	
+        	List<Integer> list = new LinkedList<Integer>();
+        			        			
+            while(rs.next()){
+            	list.add(rs.getInt(1));
+            }
+            
+            return list;           
+        } catch (SQLException ex) {
+            //Logger.getLogger(om160076_BuyerOperations.class.getName()).log(Level.SEVERE, null, ex);
+        	return null;
+        }
 	}
 
 	@Override
-	public BigDecimal getCredit(int buyerId) {
-		// TODO Auto-generated method stub
-		return null;
+	public BigDecimal getCredit(int buyerId) {		
+		Connection connection=DB.getInstance().getConnection();
+		String getCount="select Stanje from Racun where IdKupac = ?";
+        
+        try ( Statement statement=connection.createStatement();
+        	PreparedStatement psSelect=connection.prepareStatement(getCount);){
+           	
+           	psSelect.setInt(1, buyerId);
+           	ResultSet rs = psSelect.executeQuery();
+           	
+           	rs.next();
+			return BigDecimal.valueOf(rs.getFloat(1));
+            
+        } catch (SQLException ex) {
+            //Logger.getLogger(om160076_BuyerOperations.class.getName()).log(Level.SEVERE, null, ex);
+            return new BigDecimal(-1);
+        }
 	}
 
 }

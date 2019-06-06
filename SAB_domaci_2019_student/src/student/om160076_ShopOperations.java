@@ -204,9 +204,6 @@ public class om160076_ShopOperations implements ShopOperations {
             	list.add(rs.getInt(1));
             }
             
-            if(list.size() == 0)
-            	return null;
-            
             return list;           
         } catch (SQLException ex) {
             //Logger.getLogger(om160076_ShopOperations.class.getName()).log(Level.SEVERE, null, ex);

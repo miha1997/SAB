@@ -44,7 +44,7 @@ public interface ShopOperations {
     int increaseArticleCount(int articleId, int increment);
 
     /**
-     * Gets count og articles in shop.
+     * Gets count of articles in shop.
      * @param articleId id of the article
      * @return number of articles in shop
      */

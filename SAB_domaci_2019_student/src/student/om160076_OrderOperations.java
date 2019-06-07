@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Calendar;
+import java.util.LinkedList;
 import java.util.List;
 
 import java.util.logging.Level;
@@ -20,21 +21,17 @@ public class om160076_OrderOperations implements OrderOperations {
 	@Override
 	public int addArticle(int orderId, int articleId, int count) {
 		Connection connection=DB.getInstance().getConnection();
-		String getCount="select NaStanju, Cena, IdProdavnica from Artikal where IdArtikal = ?";
-		String getDiscount="select Popust from Prodavnica where IdProdavnica = ?";
+		String getCount="select NaStanju from Artikal where IdArtikal = ?";
 		String getItemId="select IdStavka from Stavka where IdArtikal = ? and IdNarudzbina = ?";
 		String updateArticle="update Artikal set NaStanju = NaStanju - ? where IdArtikal = ?";
-		String updateOrder="update Narudzbina set Suma = Suma + ? where IdNarudzbina = ?";
-		String updateItem="update Stavka set Kolicina = Kolicina + ?, Suma = Suma + ? where IdArtikal = ? and IdNarudzbina = ?";		
-        String insertItem="insert into Stavka values(?,?,?,?)";
+		String updateItem="update Stavka set Kolicina = Kolicina + ? where IdArtikal = ? and IdNarudzbina = ?";		
+        String insertItem="insert into Stavka values(?,?,?)";
        
         try ( Statement statement=connection.createStatement();
         	PreparedStatement psGetCount=connection.prepareStatement(getCount);
-        	PreparedStatement psGetDiscount=connection.prepareStatement(getDiscount);
         	PreparedStatement psUpdateArticle=connection.prepareStatement(updateArticle);
         	PreparedStatement psUpdateItem=connection.prepareStatement(updateItem);
         	PreparedStatement psItemId=connection.prepareStatement(getItemId);
-        	PreparedStatement psUpdateOrder=connection.prepareStatement(updateOrder);
             PreparedStatement psInsertItem=connection.prepareStatement(insertItem, PreparedStatement.RETURN_GENERATED_KEYS);){
         	
         	//check if there are enough items
@@ -49,36 +46,15 @@ public class om160076_OrderOperations implements OrderOperations {
             if( rs.getInt(1) < count)
             	return -1;
             
-            double price = rs.getDouble(2);
-            int idShop = rs.getInt(3);
-            
-            //get discount
-            psGetDiscount.setInt(1, idShop);
-            rs = psGetDiscount.executeQuery();
-            
-            rs.next();
-            double discount = rs.getDouble(1);
-            
-            discount = 100 - discount;
-            discount /= 100;
-            
-            price *= discount*count;
-            
             //update article
             psUpdateArticle.setInt(1, count);
             psUpdateArticle.setInt(2, articleId);
             psUpdateArticle.executeUpdate();
-           	
-            //update order
-            psUpdateOrder.setDouble(1, price);
-            psUpdateOrder.setInt(2, orderId);
-            psUpdateOrder.executeUpdate();
             
             //update item if exits
             psUpdateItem.setInt(1, count);
-            psUpdateItem.setDouble(2, price);
-            psUpdateItem.setInt(3, articleId);
-            psUpdateItem.setInt(4, orderId);
+            psUpdateItem.setInt(2, articleId);
+            psUpdateItem.setInt(3, orderId);
             
            	int updated = psUpdateItem.executeUpdate();
            	//if exits
@@ -94,7 +70,6 @@ public class om160076_OrderOperations implements OrderOperations {
            		psInsertItem.setInt(1, orderId);
            		psInsertItem.setInt(2, articleId);
            		psInsertItem.setInt(3, count);
-           		psInsertItem.setDouble(4, price);
            		psInsertItem.executeUpdate();
                 rs = psInsertItem.getGeneratedKeys();
                 
@@ -103,21 +78,56 @@ public class om160076_OrderOperations implements OrderOperations {
            	}
             
         } catch (SQLException ex) {
-            Logger.getLogger(om160076_OrderOperations.class.getName()).log(Level.SEVERE, null, ex);
+            //Logger.getLogger(om160076_OrderOperations.class.getName()).log(Level.SEVERE, null, ex);
             return -1;
         }
 	}
 
 	@Override
 	public int removeArticle(int orderId, int articleId) {
-		// TODO Auto-generated method stub
-		return 0;
+		Connection connection=DB.getInstance().getConnection();
+		String deleteItem="delete from Stavka where IdArtikal = ? and IdNarudzbina = ?";
+        
+        try ( Statement statement=connection.createStatement();
+        	PreparedStatement psDeleteItem=connection.prepareStatement(deleteItem);){
+        	
+        	psDeleteItem.setInt(1, articleId);
+        	psDeleteItem.setInt(2, orderId);       	
+            int deleted = psDeleteItem.executeUpdate();
+            
+            if(deleted == 0)
+            	return -1;
+            
+            return 1;
+            
+        } catch (SQLException ex) {
+            //Logger.getLogger(om160076_OrderOperations.class.getName()).log(Level.SEVERE, null, ex);
+            return -1;
+        }
 	}
 
 	@Override
 	public List<Integer> getItems(int orderId) {
-		// TODO Auto-generated method stub
-		return null;
+		Connection connection=DB.getInstance().getConnection();
+        String getAllItems="select IdStavka from Stavka where IdNarudzbina = ?";
+        
+        try ( Statement statement=connection.createStatement();
+        	PreparedStatement psSelect=connection.prepareStatement(getAllItems);){
+        	
+        	psSelect.setInt(1, orderId);
+        	ResultSet rs = psSelect.executeQuery();
+        	
+        	List<Integer> list = new LinkedList<Integer>();
+        			        			
+            while(rs.next()){
+            	list.add(rs.getInt(1));
+            }
+            
+            return list;           
+        } catch (SQLException ex) {
+            //Logger.getLogger(om160076_OrderOperations.class.getName()).log(Level.SEVERE, null, ex);
+        	return new LinkedList<Integer>();
+        }
 	}
 
 	@Override
@@ -140,32 +150,114 @@ public class om160076_OrderOperations implements OrderOperations {
 
 	@Override
 	public String getState(int orderId) {
-		// TODO Auto-generated method stub
-		return null;
+		Connection connection=DB.getInstance().getConnection();
+        String getStatus="select Status from Narudzbina where IdNarudzbina = ?";
+        
+        try ( Statement statement=connection.createStatement();
+        	PreparedStatement psSelect=connection.prepareStatement(getStatus);){
+        	
+        	psSelect.setInt(1, orderId);
+        	ResultSet rs = psSelect.executeQuery();
+        	
+        	rs.next();
+        	return rs.getString(1);
+         
+        } catch (SQLException ex) {
+            //Logger.getLogger(om160076_OrderOperations.class.getName()).log(Level.SEVERE, null, ex);
+        	return "";
+        }
 	}
 
 	@Override
 	public Calendar getSentTime(int orderId) {
-		// TODO Auto-generated method stub
-		return null;
+		Connection connection=DB.getInstance().getConnection();
+        String getDate="select DatumSlanja from Narudzbina where IdNarudzbina = ?";
+        
+        try ( Statement statement=connection.createStatement();
+        	PreparedStatement psSelect=connection.prepareStatement(getDate);){
+        	
+        	psSelect.setInt(1, orderId);
+        	ResultSet rs = psSelect.executeQuery();
+        	
+        	rs.next();
+        	
+        	Calendar cal = Calendar.getInstance();
+        	cal.setTime(rs.getDate(1));
+        	return cal;
+         
+        } catch (SQLException ex) {
+            //Logger.getLogger(om160076_OrderOperations.class.getName()).log(Level.SEVERE, null, ex);
+        	return null;
+        }
 	}
 
 	@Override
 	public Calendar getRecievedTime(int orderId) {
-		// TODO Auto-generated method stub
-		return null;
+		Connection connection=DB.getInstance().getConnection();
+        String getDate="select DatumStizanja from Narudzbina where IdNarudzbina = ?";
+        
+        try ( Statement statement=connection.createStatement();
+        	PreparedStatement psSelect=connection.prepareStatement(getDate);){
+        	
+        	psSelect.setInt(1, orderId);
+        	ResultSet rs = psSelect.executeQuery();
+        	
+        	rs.next();
+        	
+        	Calendar cal = Calendar.getInstance();
+        	cal.setTime(rs.getDate(1));
+        	return cal;
+         
+        } catch (SQLException ex) {
+            //Logger.getLogger(om160076_OrderOperations.class.getName()).log(Level.SEVERE, null, ex);
+        	return null;
+        }
 	}
 
 	@Override
 	public int getBuyer(int orderId) {
-		// TODO Auto-generated method stub
-		return 0;
+		Connection connection=DB.getInstance().getConnection();
+		String getBuyer="select IdKupac from Narudzbina where IdNarudzbina = ?";
+        
+        try ( Statement statement=connection.createStatement();
+        	PreparedStatement psSelect=connection.prepareStatement(getBuyer);){
+        	
+        	psSelect.setInt(1, orderId);
+            ResultSet rs = psSelect.executeQuery();
+            
+            //if there is no such order
+            if(! rs.next())
+            	return -1;
+
+            return rs.getInt(1);
+            
+        } catch (SQLException ex) {
+            //Logger.getLogger(om160076_OrderOperations.class.getName()).log(Level.SEVERE, null, ex);
+            return -1;
+        }
 	}
 
 	@Override
 	public int getLocation(int orderId) {
-		// TODO Auto-generated method stub
-		return 0;
+		Connection connection=DB.getInstance().getConnection();
+		String getCity="select TrenutniGrad from Narudzbina where IdNarudzbina = ?";
+        
+        try ( Statement statement=connection.createStatement();
+        	PreparedStatement psSelect=connection.prepareStatement(getCity);){
+        	
+        	psSelect.setInt(1, orderId);
+            ResultSet rs = psSelect.executeQuery();
+            
+            //if there is no such order
+            if(! rs.next())
+            	return -2;
+
+            return rs.getInt(1);
+            
+        } catch (SQLException ex) {
+            //Logger.getLogger(om160076_OrderOperations.class.getName()).log(Level.SEVERE, null, ex);
+            return -2;
+        }
 	}
 
 }

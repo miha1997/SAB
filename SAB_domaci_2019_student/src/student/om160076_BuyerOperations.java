@@ -169,7 +169,7 @@ public class om160076_BuyerOperations implements BuyerOperations {
             return list;           
         } catch (SQLException ex) {
             //Logger.getLogger(om160076_BuyerOperations.class.getName()).log(Level.SEVERE, null, ex);
-        	return null;
+        	return new LinkedList<Integer>();
         }
 	}
 

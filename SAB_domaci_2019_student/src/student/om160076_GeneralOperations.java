@@ -11,6 +11,7 @@ import java.sql.Statement;
 import java.util.Calendar;
 
 import operations.GeneralOperations;
+import student.helper.Graph;
 import student.helper.Timer;
 import student.jdbc.DB;
 import java.util.logging.Level;
@@ -59,6 +60,9 @@ public class om160076_GeneralOperations implements GeneralOperations {
         String deleteBuyer="delete from Kupac";
         String deleteShop="delete from Prodavnica";
         String deleteCity="delete from Grad";
+        
+        Graph graph = Graph.getGraph();
+        graph.eraseGraph();
         
         try ( Statement statement=connection.createStatement();){        	            
         	statement.executeUpdate(deleteTransactionBuyer);

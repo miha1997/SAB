@@ -5,6 +5,7 @@ import student.om160076_GeneralOperations;
 import student.om160076_OrderOperations;
 import student.om160076_ShopOperations;
 import student.om16076_CityOperations;
+import student.helper.Graph;
 import student.jdbc.DB;
 
 import java.math.BigDecimal;
@@ -20,6 +21,27 @@ import java.util.logging.Logger;
 
 public class StudentMain {
 
+	private static void tryGraph() {
+		Graph graph = Graph.getGraph();
+		
+		
+		graph.addCity(0);
+		graph.addCity(1);
+		graph.addCity(2);
+		graph.addCity(3);
+		
+		graph.addPath(0, 2, -2);
+		
+		graph.addPath(1, 0, 4);
+		graph.addPath(1, 2, 3);
+		
+		graph.addPath(2, 3, 2);
+		
+		graph.addPath(3, 1, -1);
+		
+		graph.print();
+	}
+	
     public static void main(String[] args) {
 
         ArticleOperations articleOperations = new om160076_ArticleOperations(); // Change this for your implementation (points will be negative if interfaces are not implemented).
@@ -30,8 +52,8 @@ public class StudentMain {
         ShopOperations shopOperations = new om160076_ShopOperations();
         TransactionOperations transactionOperations = null;
              
-        int i = orderOperations.getLocation(9);
-        System.out.println(i);
+        /*int i = orderOperations.getLocation(9);
+        System.out.println(i);*/
         
         /*List<Integer> list = orderOperations.getItems(9);
         
@@ -41,7 +63,8 @@ public class StudentMain {
         /*BigDecimal res = buyerOperations.getCredit(1);
         System.out.println(res.floatValue());*/
         
-        
+        tryGraph();
+               
 //
 //        Calendar c = Calendar.getInstance();
 //        c.clear();

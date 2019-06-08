@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import operations.CityOperations;
+import student.helper.Graph;
 import student.jdbc.DB;
 
 
@@ -103,8 +104,9 @@ public class om16076_CityOperations implements CityOperations {
 
 	@Override
 	public List<Integer> getConnectedCities(int cityId) {
-		// TODO Auto-generated method stub
-		return null;
+		Graph graph = Graph.getGraph();
+		
+		return graph.getConnectedCities(cityId);
 	}
 
 	@Override

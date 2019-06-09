@@ -24,7 +24,8 @@ public class Timer {
 	
 	//update states of orders
 	public void passDay() {
-		
+		current.add(Calendar.DATE, 1);  
+
 	}
 	
 	public Calendar getTime() {

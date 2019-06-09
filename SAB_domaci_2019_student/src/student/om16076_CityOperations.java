@@ -30,7 +30,13 @@ public class om16076_CityOperations implements CityOperations {
             ResultSet rs = ps.getGeneratedKeys();
             
             rs.next();
-            return rs.getInt(1);
+            int cityId =  rs.getInt(1);
+            
+            Graph graph = Graph.getGraph();
+            graph.addCity(cityId);
+            
+            return cityId;
+            
         } catch (SQLException ex) {
             //Logger.getLogger(om16076_CityOperations.class.getName()).log(Level.SEVERE, null, ex);
             return -1;
@@ -92,6 +98,9 @@ public class om16076_CityOperations implements CityOperations {
             psInsert.setInt(3, distance);
             psInsert.executeUpdate();
             rs = psInsert.getGeneratedKeys();
+            
+            Graph graph = Graph.getGraph();
+            graph.addPath(cityId1, cityId2, distance);
             
             rs.next();
             return rs.getInt(1);

@@ -96,7 +96,7 @@ public class om160076_BuyerOperations implements BuyerOperations {
 	@Override
 	public BigDecimal increaseCredit(int buyerId, BigDecimal credit) {	
 		if(credit.floatValue() < 0)
-			return new BigDecimal(-1);
+			return new BigDecimal(-1).setScale(3);
 		
 		Connection connection=DB.getInstance().getConnection();
 		String getCount="select Stanje from Racun where IdKupac = ?";
@@ -113,17 +113,17 @@ public class om160076_BuyerOperations implements BuyerOperations {
 
            	//if there is no acc
            	if(updated == 0)
-           		return new BigDecimal(-1);
+           		return new BigDecimal(-1).setScale(3);
            	
            	psSelect.setInt(1, buyerId);
            	ResultSet rs = psSelect.executeQuery();
            	
            	rs.next();
-			return BigDecimal.valueOf(rs.getFloat(1));
+			return BigDecimal.valueOf(rs.getFloat(1)).setScale(3);
             
         } catch (SQLException ex) {
             //Logger.getLogger(om160076_BuyerOperations.class.getName()).log(Level.SEVERE, null, ex);
-            return new BigDecimal(-1);
+            return new BigDecimal(-1).setScale(3);
         }
 	}
 
@@ -185,11 +185,11 @@ public class om160076_BuyerOperations implements BuyerOperations {
            	ResultSet rs = psSelect.executeQuery();
            	
            	rs.next();
-			return BigDecimal.valueOf(rs.getFloat(1));
+			return BigDecimal.valueOf(rs.getFloat(1)).setScale(3);
             
         } catch (SQLException ex) {
             //Logger.getLogger(om160076_BuyerOperations.class.getName()).log(Level.SEVERE, null, ex);
-            return new BigDecimal(-1);
+            return new BigDecimal(-1).setScale(3);
         }
 	}
 

@@ -4,6 +4,7 @@ import student.om160076_BuyerOperations;
 import student.om160076_GeneralOperations;
 import student.om160076_OrderOperations;
 import student.om160076_ShopOperations;
+import student.om160076_TransactionOperations;
 import student.om16076_CityOperations;
 import student.helper.Graph;
 import student.jdbc.DB;
@@ -12,6 +13,7 @@ import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.List;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import tests.TestHandler;
@@ -50,20 +52,34 @@ public class StudentMain {
         GeneralOperations generalOperations = new om160076_GeneralOperations();
         OrderOperations orderOperations = new om160076_OrderOperations();
         ShopOperations shopOperations = new om160076_ShopOperations();
-        TransactionOperations transactionOperations = null;
-             
-        /*int i = orderOperations.getLocation(9);
-        System.out.println(i);*/
+        TransactionOperations transactionOperations = new om160076_TransactionOperations();
         
-        /*List<Integer> list = orderOperations.getItems(9);
+        /*generalOperations.eraseAll();
         
-        for(Integer li : list)
-        	System.out.println(li);*/
+        int cityId = cityOperations.createCity("Kragujevac");
+        int buyerId = buyerOperations.createBuyer("Pera", cityId);
+
+        BigDecimal credit1 = new BigDecimal("1000.000").setScale(3);
+
+        BigDecimal creditReturned = buyerOperations.increaseCredit(buyerId, credit1);
         
-        /*BigDecimal res = buyerOperations.getCredit(1);
-        System.out.println(res.floatValue());*/
+        System.out.println(credit1.doubleValue() + " " + creditReturned.doubleValue());
         
-        tryGraph();
+        if(credit1.equals(creditReturned)) {
+        	System.out.println("x");
+        }
+
+        BigDecimal credit2 = new BigDecimal("500");
+        buyerOperations.increaseCredit(buyerId, credit2).setScale(3);
+
+        creditReturned = buyerOperations.getCredit(buyerId);
+        if(credit1.add(credit2).setScale(3).equals(creditReturned)) {
+        	System.out.println("x");
+        }*/
+        
+
+        
+        //tryGraph();
                
 //
 //        Calendar c = Calendar.getInstance();
@@ -78,7 +94,7 @@ public class StudentMain {
 //        if(c.equals(c2)) System.out.println("jednako");
 //        else System.out.println("nije jednako");
 
-        /*TestHandler.createInstance(
+        TestHandler.createInstance(
                 articleOperations,
                 buyerOperations,
                 cityOperations,
@@ -88,6 +104,6 @@ public class StudentMain {
                 transactionOperations
         );
 
-        TestRunner.runTests();*/
+        TestRunner.runTests();
     }
 }

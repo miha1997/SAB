@@ -142,7 +142,7 @@ public class om160076_OrderOperations implements OrderOperations {
         		"	where s.IdNarudzbina = ?" + 
         		"	and s.IdArtikal = a.IdArtikal\r\n" + 
         		"	and a.IdProdavnica = p.IdProdavnica";
-        String updateOrder="update Narudzbina set Status = 'sent', Progres = 0, Suma = ?, DatumSlanja = ?, TrenutniGrad = ?, DatumSastavljanja = ? where IdNarudzbina = ?";	
+        String updateOrder="update Narudzbina set Status = 'sent', Progres = 0, DatumSlanja = ?, TrenutniGrad = ?, DatumSastavljanja = ? where IdNarudzbina = ?";	
         
         try ( Statement statement=connection.createStatement();
         	PreparedStatement psSelect=connection.prepareStatement(getOrder);
@@ -178,20 +178,18 @@ public class om160076_OrderOperations implements OrderOperations {
         	shopCity = res[1];
         	
         	//////////////////////////////////////////////
-        	//add real sum here
-        	pUpdate.setDouble(1, 100);
         	
         	Timer timer = Timer.getTimer();
         	Calendar calendar = (Calendar) timer.getTime().clone();
         	
         	
-        	pUpdate.setDate(2, new java.sql.Date(calendar.getTimeInMillis()));
-        	pUpdate.setInt(3, shopCity);
+        	pUpdate.setDate(1, new java.sql.Date(calendar.getTimeInMillis()));
+        	pUpdate.setInt(2, shopCity);
         	
         	
         	calendar.add(Calendar.DATE, ready);
-        	pUpdate.setDate(4, new java.sql.Date(calendar.getTimeInMillis()));
-        	pUpdate.setInt(5, orderId);
+        	pUpdate.setDate(3, new java.sql.Date(calendar.getTimeInMillis()));
+        	pUpdate.setInt(4, orderId);
             
         	pUpdate.executeUpdate();
         	
@@ -206,14 +204,44 @@ public class om160076_OrderOperations implements OrderOperations {
 
 	@Override
 	public BigDecimal getFinalPrice(int orderId) {
-		// TODO Auto-generated method stub
-		return null;
+		Connection connection=DB.getInstance().getConnection();
+        String getSum="select Popust from Narudzbina where IdNarudzbina = ?  and Status != 'created'";
+        
+        try ( Statement statement=connection.createStatement();
+        	PreparedStatement psSelect=connection.prepareStatement(getSum);){
+        	
+        	psSelect.setInt(1, orderId);
+        	ResultSet rs = psSelect.executeQuery();
+        	
+        	if(!rs.next())
+        		return new BigDecimal(0).setScale(3);
+        	
+			return BigDecimal.valueOf(rs.getFloat(1)).setScale(3);         
+        } catch (SQLException ex) {
+            //Logger.getLogger(om160076_OrderOperations.class.getName()).log(Level.SEVERE, null, ex);
+        	return new BigDecimal(-1).setScale(3);
+        }
 	}
 
 	@Override
 	public BigDecimal getDiscountSum(int orderId) {
-		// TODO Auto-generated method stub
-		return null;
+		Connection connection=DB.getInstance().getConnection();
+        String getSum="select Suma - Popust from Narudzbina where IdNarudzbina = ?  and Status != 'created'";
+        
+        try ( Statement statement=connection.createStatement();
+        	PreparedStatement psSelect=connection.prepareStatement(getSum);){
+        	
+        	psSelect.setInt(1, orderId);
+        	ResultSet rs = psSelect.executeQuery();
+        	
+        	if(!rs.next())
+        		return new BigDecimal(0).setScale(3);
+        	
+			return BigDecimal.valueOf(rs.getFloat(1)).setScale(3);         
+        } catch (SQLException ex) {
+            //Logger.getLogger(om160076_OrderOperations.class.getName()).log(Level.SEVERE, null, ex);
+        	return new BigDecimal(-1).setScale(3);
+        }
 	}
 
 	@Override

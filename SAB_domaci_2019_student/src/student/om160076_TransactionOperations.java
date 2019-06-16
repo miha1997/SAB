@@ -21,7 +21,7 @@ public class om160076_TransactionOperations implements TransactionOperations {
 	@Override
 	public BigDecimal getBuyerTransactionsAmmount(int buyerId) {
 		Connection connection=DB.getInstance().getConnection();
-        String getSum="select sum(Iznos) from NaplataKupac where IdRacun = ?";
+        String getSum="select sum(t.Iznos) from NaplataKupac as n, Transakcija as t where nIdRacun = ?  and n.IdNaplata = t.IdTransakcija";
         
         try ( Statement statement=connection.createStatement();
         	PreparedStatement psSelect=connection.prepareStatement(getSum);){
@@ -42,7 +42,7 @@ public class om160076_TransactionOperations implements TransactionOperations {
 	@Override
 	public BigDecimal getShopTransactionsAmmount(int shopId) {
 		Connection connection=DB.getInstance().getConnection();
-        String getSum="select sum(Iznos) from NaplataProdavnica where IdProdavnica = ?";
+        String getSum="select sum(t.Iznos) from NaplataProdavnica as n, Transakcija as t where IdProdavnica = ? and t.IdTransakcija = n.IdNaplata";
         
         try ( Statement statement=connection.createStatement();
         	PreparedStatement psSelect=connection.prepareStatement(getSum);){
@@ -157,7 +157,7 @@ public class om160076_TransactionOperations implements TransactionOperations {
 	@Override
 	public BigDecimal getAmmountThatBuyerPayedForOrder(int orderId) {
 		Connection connection=DB.getInstance().getConnection();
-        String getSum="select Iznos from NaplataKupac where IdNarudzbina = ?";
+        String getSum="select t.Iznos from NaplataKupaca as n, Transakcija as t where IdNarudzbina = ? and n.IdNaplata = t.IdTransakcija";
         
         try ( Statement statement=connection.createStatement();
         	PreparedStatement psSelect=connection.prepareStatement(getSum);){
@@ -178,7 +178,7 @@ public class om160076_TransactionOperations implements TransactionOperations {
 	@Override
 	public BigDecimal getAmmountThatShopRecievedForOrder(int shopId, int orderId) {
 		Connection connection=DB.getInstance().getConnection();
-        String getSum="select Iznos from NaplataProdavnica where IdNarudzbina = ? and IdProdavnica = ?";
+        String getSum="select t.Iznos from NaplataProdavnica as n, Transakcija as t where n.IdNarudzbina = ? and n.IdProdavnica = ? and n.IdNaplata = t.IdTransakcija";
         
         try ( Statement statement=connection.createStatement();
         	PreparedStatement psSelect=connection.prepareStatement(getSum);){

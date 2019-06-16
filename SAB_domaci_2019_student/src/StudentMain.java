@@ -183,15 +183,15 @@ public class StudentMain {
         ShopOperations shopOperations = new om160076_ShopOperations();
         TransactionOperations transactionOperations = new om160076_TransactionOperations();
         
-        test(articleOperations, buyerOperations, cityOperations, generalOperations, orderOperations, shopOperations, transactionOperations);
+        /*test(articleOperations, buyerOperations, cityOperations, generalOperations, orderOperations, shopOperations, transactionOperations);
         //System.out.println(generalOperations.getCurrentTime().getTime());
         orderOperations.completeOrder(1);
         //System.out.println(generalOperations.getCurrentTime().getTime());
         
         System.out.println(generalOperations.getCurrentTime().getTime());
         System.out.println(orderOperations.getLocation(1));
-        generalOperations.time(4);
-        System.out.println(generalOperations.getCurrentTime().getTime());
+        generalOperations.time(4);*/
+        /*System.out.println(generalOperations.getCurrentTime().getTime());
         System.out.println(orderOperations.getLocation(1));
         
         generalOperations.time(14);
@@ -208,7 +208,7 @@ public class StudentMain {
         
         generalOperations.time(7);
         System.out.println(generalOperations.getCurrentTime().getTime());
-        System.out.println(orderOperations.getLocation(1));
+        System.out.println(orderOperations.getLocation(1));*/
         
         /*for(int i = 0; i < 25; i ++) {
         	generalOperations.time(1);
@@ -232,7 +232,7 @@ public class StudentMain {
 //        if(c.equals(c2)) System.out.println("jednako");
 //        else System.out.println("nije jednako");
 
-        /*TestHandler.createInstance(
+        TestHandler.createInstance(
                 articleOperations,
                 buyerOperations,
                 cityOperations,
@@ -242,6 +242,6 @@ public class StudentMain {
                 transactionOperations
         );
 
-        TestRunner.runTests();*/
+        TestRunner.runTests();
     }
 }

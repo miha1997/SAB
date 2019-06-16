@@ -37,10 +37,16 @@ public class Timer {
 		Connection connection=DB.getInstance().getConnection();
 		String getOrders="select n.IdNarudzbina, n.TrenutniGrad, n.Progres, k.IdGrad, n.DatumSastavljanja from Narudzbina as n, Kupac as k where  k.IdKupac = n.IdKupac and n.Status = 'sent'";
 		String updateQuery="update Narudzbina set Status = ?, TrenutniGrad = ?, Progres = ? where IdNarudzbina = ?";
+		String updateTime ="update Narudzbina set TrenutniDatum = ?";
 		
         try ( Statement statement=connection.createStatement();
         	PreparedStatement psUpdate=connection.prepareStatement(updateQuery);
+        	PreparedStatement psTime=connection.prepareStatement(updateTime);
         	PreparedStatement psSelect=connection.prepareStatement(getOrders);){
+        	
+        	java.util.Date now = cur.getTime();
+        	Date nowSql = new Date(now.getTime());
+        	psTime.setDate(1, nowSql);
         	
             ResultSet rs = psSelect.executeQuery();
             

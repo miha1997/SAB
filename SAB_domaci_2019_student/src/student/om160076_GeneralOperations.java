@@ -60,10 +60,12 @@ public class om160076_GeneralOperations implements GeneralOperations {
         String deleteBuyer="delete from Kupac";
         String deleteShop="delete from Prodavnica";
         String deleteCity="delete from Grad";
+        String deleteT="delete from Transakcija";
         
         String seed="DBCC CHECKIDENT ('Grad', RESEED, 0); DBCC CHECKIDENT ('NaplataKupac', RESEED, 0);" +
         		"DBCC CHECKIDENT ('NaplataProdavnica', RESEED, 0);DBCC CHECKIDENT ('Stavka', RESEED, 0);" +
         		"DBCC CHECKIDENT ('Artikal', RESEED, 0); DBCC CHECKIDENT ('Narudzbina', RESEED, 0);" +
+        		"DBCC CHECKIDENT ('Transakcija', RESEED, 0);" +
         		"DBCC CHECKIDENT ('Kupac', RESEED, 0);DBCC CHECKIDENT ('Prodavnica', RESEED, 0);";
         
         
@@ -77,6 +79,7 @@ public class om160076_GeneralOperations implements GeneralOperations {
         	statement.executeUpdate(deleteAcc);
         	statement.executeUpdate(deleteItem);
         	statement.executeUpdate(deleteArticle);
+        	statement.executeUpdate(deleteT);
         	
         	statement.executeUpdate(deleteOrder);
         	statement.executeUpdate(deletePath);

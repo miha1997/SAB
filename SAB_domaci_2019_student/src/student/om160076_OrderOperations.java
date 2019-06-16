@@ -2,6 +2,7 @@ package student;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
+import java.util.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,11 +10,13 @@ import java.sql.Statement;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
-
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import operations.OrderOperations;
+import student.helper.Graph;
+import student.helper.Timer;
 import student.jdbc.DB;
 
 public class om160076_OrderOperations implements OrderOperations {
@@ -132,8 +135,73 @@ public class om160076_OrderOperations implements OrderOperations {
 
 	@Override
 	public int completeOrder(int orderId) {
-		// TODO Auto-generated method stub
-		return 0;
+		Connection connection=DB.getInstance().getConnection();
+        String getOrder="select IdNarudzbina from Narudzbina where IdNarudzbina = ?";
+        String getCities="SELECT DISTINCT (p.IdGrad)\r\n" + 
+        		"	from Artikal as a, Stavka as s, Prodavnica as p\r\n" + 
+        		"	where s.IdNarudzbina = ?" + 
+        		"	and s.IdArtikal = a.IdArtikal\r\n" + 
+        		"	and a.IdProdavnica = p.IdProdavnica";
+        String updateOrder="update Narudzbina set Status = 'sent', Progres = 0, Suma = ?, DatumSlanja = ?, TrenutniGrad = ?, DatumSastavljanja = ? where IdNarudzbina = ?";	
+        
+        try ( Statement statement=connection.createStatement();
+        	PreparedStatement psSelect=connection.prepareStatement(getOrder);
+        	PreparedStatement pUpdate=connection.prepareStatement(updateOrder);
+        	PreparedStatement psCities=connection.prepareStatement(getCities);){
+        	
+        	psSelect.setInt(1, orderId);
+        	ResultSet rs = psSelect.executeQuery();
+        	
+        	//-1 if there is no order
+            if(! rs.next()) {
+            	return -1;
+            }
+            
+            //check if buyer has enough money
+            
+            //get cities
+            psCities.setInt(1, orderId);
+        	ResultSet cities = psCities.executeQuery();
+        	
+        	LinkedList<Integer> cityList = new LinkedList<Integer>();
+        	
+        	while( cities.next()) {
+        		cityList.add(cities.getInt(1));
+        	}
+            
+        	Graph graph = Graph.getGraph();
+        	int shopCity;
+        	int ready;
+        	
+        	int [] res = graph.prepareArticles(cityList, orderId);
+        	ready = res[0];
+        	shopCity = res[1];
+        	
+        	//////////////////////////////////////////////
+        	//add real sum here
+        	pUpdate.setDouble(1, 100);
+        	
+        	Timer timer = Timer.getTimer();
+        	Calendar calendar = (Calendar) timer.getTime().clone();
+        	
+        	
+        	pUpdate.setDate(2, new java.sql.Date(calendar.getTimeInMillis()));
+        	pUpdate.setInt(3, shopCity);
+        	
+        	
+        	calendar.add(Calendar.DATE, ready);
+        	pUpdate.setDate(4, new java.sql.Date(calendar.getTimeInMillis()));
+        	pUpdate.setInt(5, orderId);
+            
+        	pUpdate.executeUpdate();
+        	
+            return 1;
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(om160076_OrderOperations.class.getName()).log(Level.SEVERE, null, ex);
+        	return -1;
+        }
+			
 	}
 
 	@Override

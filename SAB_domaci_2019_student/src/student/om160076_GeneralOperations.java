@@ -61,6 +61,13 @@ public class om160076_GeneralOperations implements GeneralOperations {
         String deleteShop="delete from Prodavnica";
         String deleteCity="delete from Grad";
         
+        String seed="DBCC CHECKIDENT ('Grad', RESEED, 0); DBCC CHECKIDENT ('NaplataKupac', RESEED, 0);" +
+        		"DBCC CHECKIDENT ('NaplataProdavnica', RESEED, 0);DBCC CHECKIDENT ('Stavka', RESEED, 0);" +
+        		"DBCC CHECKIDENT ('Artikal', RESEED, 0); DBCC CHECKIDENT ('Narudzbina', RESEED, 0);" +
+        		"DBCC CHECKIDENT ('Kupac', RESEED, 0);DBCC CHECKIDENT ('Prodavnica', RESEED, 0);";
+        
+        
+        
         Graph graph = Graph.getGraph();
         graph.eraseGraph();
         
@@ -76,6 +83,8 @@ public class om160076_GeneralOperations implements GeneralOperations {
         	statement.executeUpdate(deleteBuyer);
         	statement.executeUpdate(deleteShop);
         	statement.executeUpdate(deleteCity);
+        	
+        	statement.executeUpdate(seed);
 	
         } catch (SQLException ex) {
             Logger.getLogger(om160076_GeneralOperations.class.getName()).log(Level.SEVERE, null, ex);

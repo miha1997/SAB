@@ -1,10 +1,22 @@
 package student.helper;
 
+import java.sql.Connection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.security.auth.Destroyable;
+
+import student.jdbc.DB;
 
 public class Graph {
 	//number of cities
@@ -31,6 +43,17 @@ public class Graph {
 	
 	private Graph() {
 
+	}
+	
+	//gets city index in array
+	private int getIndex(int city) {
+		
+		for(int i = 0; i < ids.size(); i++) 
+			if(ids.get(i) == city)
+				return i;
+		
+		return -1;
+		
 	}
 	
 	public static Graph getGraph() {
@@ -94,6 +117,80 @@ public class Graph {
 			}
 		
 		return list;
+	}
+	
+	public int[] checkProgress(int curCity, int progress, int buyerCity) {
+		int cur = getIndex(curCity);
+		int buyer = getIndex(buyerCity);
+		
+		int nextCity = T.get(buyer).get(cur);
+		int distance = D[cur][nextCity];		
+		
+		nextCity = ids.get(nextCity);
+		
+		progress++;
+		if(progress == distance) {
+			progress = 0;
+		}
+		else {
+			nextCity = curCity;
+		}
+		
+		int res [] = new int[2];
+		res[0] = progress;
+		res[1] = nextCity;
+		
+		return res;
+	}
+	
+	public int[] prepareArticles(LinkedList<Integer> cityList, int orderId) {
+		Connection connection=DB.getInstance().getConnection();
+        String getMyCity="select Kupac.IdGrad from Narudzbina, Kupac where Narudzbina.IdNarudzbina = ? and Narudzbina.IdKupac = Kupac.IdKupac";
+        
+        if(! calculated)
+        	calculate();
+        
+        try ( Statement statement=connection.createStatement();
+        	PreparedStatement psSelect=connection.prepareStatement(getMyCity);){
+        	
+        	psSelect.setInt(1, orderId);
+        	ResultSet rs = psSelect.executeQuery();
+        	
+        	rs.next();
+        	int myCity = rs.getInt(1);
+        	int i = getIndex(myCity);
+        	
+        	//find nearest city
+        	int shopCity = -1, minD = MAX;
+        	for(Integer city : cityList) {
+        		int j = getIndex(city);
+        		
+        		if(D[i][j] < minD) {
+        			shopCity = j;
+        			minD = D[i][j];
+        		}
+        	}
+        	
+        	//find critical distance to it
+        	i = shopCity;
+        	int maxD = 0;
+        	for(Integer city : cityList) {
+        		int j = getIndex(city);
+        		
+        		if(D[i][j] > maxD) 
+        			maxD = D[i][j];
+        		
+        	}
+        	
+        	int res [] = new int[2];
+        	res[0] = maxD;
+        	res[1] = ids.get(shopCity);
+        	
+        	return res;
+        } catch (SQLException ex) {
+            Logger.getLogger(Graph.class.getName()).log(Level.SEVERE, null, ex);
+        	return new int[2];
+        }
 	}
 	
 	public void addCity(int cityId) {

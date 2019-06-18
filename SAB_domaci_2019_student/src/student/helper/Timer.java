@@ -93,6 +93,20 @@ public class Timer {
 	public void passDay() {
 		current.add(Calendar.DATE, 1); 
 		
+		Connection connection=DB.getInstance().getConnection();
+        String setDate="update TrenutniDatum set Datum = ?";
+        
+        try(PreparedStatement pUpdate = connection.prepareStatement(setDate);){
+        	
+        	pUpdate.setDate(1, new java.sql.Date(timer.getTime().getTimeInMillis()));
+        	pUpdate.executeUpdate();
+        	
+        	
+        } catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		updateCurCity(current);
 		
 	}

@@ -130,7 +130,7 @@ public class om160076_BuyerOperations implements BuyerOperations {
 	@Override
 	public int createOrder(int buyerId) {
 		Connection connection=DB.getInstance().getConnection();
-        String insertOrder="insert into Narudzbina values('created',?,null,null,null,-1,null,null, null, null, null)";
+        String insertOrder="insert into Narudzbina values('created',?,null,null,null,-1,null,null, null, null)";
         
         try ( Statement statement=connection.createStatement();
             PreparedStatement psOrder=connection.prepareStatement(insertOrder, PreparedStatement.RETURN_GENERATED_KEYS);){

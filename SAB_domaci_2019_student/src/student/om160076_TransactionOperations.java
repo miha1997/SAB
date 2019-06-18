@@ -21,7 +21,7 @@ public class om160076_TransactionOperations implements TransactionOperations {
 	@Override
 	public BigDecimal getBuyerTransactionsAmmount(int buyerId) {
 		Connection connection=DB.getInstance().getConnection();
-        String getSum="select sum(t.Iznos) from NaplataKupac as n, Transakcija as t where nIdRacun = ?  and n.IdNaplata = t.IdTransakcija";
+        String getSum="select sum(t.Iznos) from NaplataKupac as n, Transakcija as t where IdRacun = ?  and n.IdNaplata = t.IdTransakcija";
         
         try ( Statement statement=connection.createStatement();
         	PreparedStatement psSelect=connection.prepareStatement(getSum);){
@@ -55,7 +55,7 @@ public class om160076_TransactionOperations implements TransactionOperations {
 			return BigDecimal.valueOf(rs.getFloat(1)).setScale(3);         
         } catch (SQLException ex) {
             //Logger.getLogger(om160076_TransactionOperations.class.getName()).log(Level.SEVERE, null, ex);
-        	return new BigDecimal(-1).setScale(3);
+            return new BigDecimal(0).setScale(3);
         }
 	}
 
@@ -141,6 +141,8 @@ public class om160076_TransactionOperations implements TransactionOperations {
             	list.add(rs.getInt(1));
             }
             
+            if(list.size() == 0)
+            	return null;
             return list;           
         } catch (SQLException ex) {
             //Logger.getLogger(om160076_TransactionOperations.class.getName()).log(Level.SEVERE, null, ex);
@@ -150,8 +152,29 @@ public class om160076_TransactionOperations implements TransactionOperations {
 
 	@Override
 	public Calendar getTimeOfExecution(int transactionId) {
-		// TODO Auto-generated method stub
-		return null;
+		Connection connection=DB.getInstance().getConnection();
+        String getDate="select Datum from Transakcija where IdTransakcija = ?";
+        
+        try ( Statement statement=connection.createStatement();
+        	PreparedStatement psSelect=connection.prepareStatement(getDate);){
+        	
+        	psSelect.setInt(1, transactionId);
+        	ResultSet rs = psSelect.executeQuery();
+        	
+        	rs.next();
+        	
+        	Calendar cal = Calendar.getInstance();
+        	
+        	if(rs.getDate(1) == null)
+        		return null;
+        	
+        	cal.setTime(rs.getDate(1));
+        	return cal;
+         
+        } catch (SQLException ex) {
+            //Logger.getLogger(om160076_OrderOperations.class.getName()).log(Level.SEVERE, null, ex);
+        	return null;
+        }
 	}
 
 	@Override
@@ -199,14 +222,43 @@ public class om160076_TransactionOperations implements TransactionOperations {
 
 	@Override
 	public BigDecimal getTransactionAmount(int transactionId) {
-		// TODO Auto-generated method stub
-		return null;
+		Connection connection=DB.getInstance().getConnection();
+        String getSum="select Iznos from Transakcija where IdTransakcija = ?";
+        
+        try ( Statement statement=connection.createStatement();
+        	PreparedStatement psSelect=connection.prepareStatement(getSum);){
+        	
+        	psSelect.setInt(1, transactionId);
+        	ResultSet rs = psSelect.executeQuery();
+        	
+        	if(!rs.next())
+        		return new BigDecimal(0).setScale(3);
+        	
+			return BigDecimal.valueOf(rs.getFloat(1)).setScale(3);         
+        } catch (SQLException ex) {
+            //Logger.getLogger(om160076_TransactionOperations.class.getName()).log(Level.SEVERE, null, ex);
+        	return new BigDecimal(-1).setScale(3);
+        }
 	}
 
 	@Override
 	public BigDecimal getSystemProfit() {
-		// TODO Auto-generated method stub
-		return null;
+		Connection connection=DB.getInstance().getConnection();
+        String getSum="select Suma from ProfitSistema";
+        
+        try ( Statement statement=connection.createStatement();){
+        	
+
+        	ResultSet rs = statement.executeQuery(getSum);
+        	
+        	if(!rs.next())
+        		return new BigDecimal(0).setScale(3);
+        	
+			return BigDecimal.valueOf(rs.getFloat(1)).setScale(3);         
+        } catch (SQLException ex) {
+            //Logger.getLogger(om160076_TransactionOperations.class.getName()).log(Level.SEVERE, null, ex);
+        	return new BigDecimal(-1).setScale(3);
+        }
 	}
 
 }

@@ -109,16 +109,32 @@ public class StudentMain {
         orderOperations.addArticle(order, monitor, 4);
         orderOperations.addArticle(order, stolica, 10);
         orderOperations.addArticle(order, sto, 4);
-
-        /*Assert.assertNull(orderOperations.getSentTime(order));
-        Assert.assertTrue("created".equals(orderOperations.getState(order)));
+        
+        int i = 1;
+        
+        if(orderOperations.getSentTime(order) == null) {
+        	System.out.println("1 radi");
+        }
+        
+        if("created".equals(orderOperations.getState(order))) {
+        	System.out.println("2 radi");
+        }
+        
         orderOperations.completeOrder(order);
-        Assert.assertTrue("sent".equals(orderOperations.getState(order)));
+        
+        if("sent".equals(orderOperations.getState(order))) {
+        	System.out.println("3 radi");
+        }
 
         int buyerTransactionId = transactionOperations.getTransationsForBuyer(buyer).get(0);
-        Assert.assertEquals(initialTime, transactionOperations.getTimeOfExecution(buyerTransactionId));
-
-        Assert.assertNull(transactionOperations.getTransationsForShop(shopA));
+        
+        if(initialTime.equals(transactionOperations.getTimeOfExecution(buyerTransactionId))) {
+        	System.out.println("4 radi");
+        }
+        
+        if(transactionOperations.getTransationsForShop(shopA) == null) {
+        	System.out.println("5 radi");
+        }
 
         //calculate ammounts - begin
         BigDecimal shopAAmount = new BigDecimal("5").multiply(new BigDecimal("1000")).setScale(3);
@@ -137,39 +153,96 @@ public class StudentMain {
         BigDecimal shopC2AmountReal = shopC2AmountWithDiscount.multiply(new BigDecimal("0.95")).setScale(3);
         BigDecimal shopC3AmountReal = shopC3AmountWithDiscount.multiply(new BigDecimal("0.95")).setScale(3);
         //calculate ammounts - end
-
-        Assert.assertEquals(amountWithDiscounts, orderOperations.getFinalPrice(order));
-        Assert.assertEquals(amountWithoutDiscounts.subtract(amountWithDiscounts), orderOperations.getDiscountSum(order));
-
-        Assert.assertEquals(amountWithDiscounts, transactionOperations.getBuyerTransactionsAmmount(buyer));
-        Assert.assertNull(transactionOperations.getShopTransactionsAmmount(shopA));
-        Assert.assertNull(transactionOperations.getShopTransactionsAmmount(shopC2));
-        Assert.assertNull(transactionOperations.getShopTransactionsAmmount(shopC3));
-        Assert.assertEquals(new BigDecimal("0"), transactionOperations.getSystemProfit());
+        
+        if(amountWithDiscounts.equals(orderOperations.getFinalPrice(order))) {
+        	System.out.println("6 radi");
+        }
+        
+        if(amountWithoutDiscounts.subtract(amountWithDiscounts).equals(orderOperations.getDiscountSum(order))) {
+        	System.out.println("7 radi");
+        }
+        
+        if(amountWithDiscounts.equals(transactionOperations.getBuyerTransactionsAmmount(buyer))) {
+        	System.out.println("8 radi");
+        }
+        
+        if(transactionOperations.getShopTransactionsAmmount(shopA).equals(new BigDecimal("0").setScale(3))) {
+        	System.out.println("9 radi");
+        }
+        
+        if(transactionOperations.getShopTransactionsAmmount(shopC2).equals(new BigDecimal("0").setScale(3))) {
+        	System.out.println("10 radi");
+        }
+        
+        if(transactionOperations.getShopTransactionsAmmount(shopC3).equals(new BigDecimal("0").setScale(3))) {
+        	System.out.println("11 radi");
+        }
+        
+        if(new BigDecimal("0").setScale(3).equals(transactionOperations.getSystemProfit())) {
+        	System.out.println("12 radi");
+        }
+        
 
         generalOperations.time(2);
-        Assert.assertEquals(initialTime, orderOperations.getSentTime(order));
-        Assert.assertNull(orderOperations.getRecievedTime(order));
-        Assert.assertEquals(orderOperations.getLocation(order), cityA);
+        
+        if(initialTime.equals(orderOperations.getSentTime(order))) {
+        	System.out.println("13 radi");
+        }
+        
+        if(orderOperations.getRecievedTime(order) == null) {
+        	System.out.println("14 radi");
+        }
+        
+        if(orderOperations.getLocation(order) == cityA) {
+        	System.out.println("15 radi");
+        }
 
         generalOperations.time(9);
-        Assert.assertEquals(orderOperations.getLocation(order), cityA);
+        if(orderOperations.getLocation(order) == cityA) {
+        	System.out.println("16 radi");
+        }
 
         generalOperations.time(8);
-        Assert.assertEquals(orderOperations.getLocation(order), cityC5);
+        if(orderOperations.getLocation(order) == cityC5) {
+        	System.out.println("17 radi");
+        }
 
         generalOperations.time(5);
-        Assert.assertEquals(orderOperations.getLocation(order), cityB);
-        Assert.assertEquals(receivedTime, orderOperations.getRecievedTime(order));
-
-        Assert.assertEquals(shopAAmountReal, transactionOperations.getShopTransactionsAmmount(shopA));
-        Assert.assertEquals(shopC2AmountReal, transactionOperations.getShopTransactionsAmmount(shopC2));
-        Assert.assertEquals(shopC3AmountReal, transactionOperations.getShopTransactionsAmmount(shopC3));
-        Assert.assertEquals(systemProfit, transactionOperations.getSystemProfit());
+        if(orderOperations.getLocation(order) == cityB) {
+        	System.out.println("18 radi");
+        }
+        
+        if(receivedTime.equals(orderOperations.getRecievedTime(order))) {
+        	System.out.println("19 radi");
+        }
+        
+        if(shopAAmountReal.equals(transactionOperations.getShopTransactionsAmmount(shopA))) {
+        	System.out.println("20 radi");
+        }
+        
+        if(shopC2AmountReal.equals(transactionOperations.getShopTransactionsAmmount(shopC2))) {
+        	System.out.println("21 radi");
+        }
+        
+        if(shopC3AmountReal.equals(transactionOperations.getShopTransactionsAmmount(shopC3))) {
+        	System.out.println("22 radi");
+        }
+        
+        if(systemProfit.equals(transactionOperations.getSystemProfit())) {
+        	System.out.println("23 radi");
+        }
 
         int shopATransactionId = transactionOperations.getTransactionForShopAndOrder(order, shopA);
-        Assert.assertNotEquals(-1, shopATransactionId);
-        Assert.assertEquals(receivedTime, transactionOperations.getTimeOfExecution(shopATransactionId));*/
+        
+        if(shopATransactionId != -1) {
+        	System.out.println("24 radi");
+        }
+        
+        if(receivedTime.equals(transactionOperations.getTimeOfExecution(shopATransactionId))) {
+        	System.out.println("25 radi");
+        }
+        
+        System.out.println(i);
 
     }
 	
@@ -183,33 +256,10 @@ public class StudentMain {
         ShopOperations shopOperations = new om160076_ShopOperations();
         TransactionOperations transactionOperations = new om160076_TransactionOperations();
         
-        /*test(articleOperations, buyerOperations, cityOperations, generalOperations, orderOperations, shopOperations, transactionOperations);
-        //System.out.println(generalOperations.getCurrentTime().getTime());
-        orderOperations.completeOrder(1);
-        //System.out.println(generalOperations.getCurrentTime().getTime());
+        //test(articleOperations, buyerOperations, cityOperations, generalOperations, orderOperations, shopOperations, transactionOperations);
+        //generalOperations.time(21);
         
-        System.out.println(generalOperations.getCurrentTime().getTime());
-        System.out.println(orderOperations.getLocation(1));
-        generalOperations.time(4);*/
-        /*System.out.println(generalOperations.getCurrentTime().getTime());
-        System.out.println(orderOperations.getLocation(1));
-        
-        generalOperations.time(14);
-        System.out.println(generalOperations.getCurrentTime().getTime());
-        System.out.println(orderOperations.getLocation(1));
-        
-        generalOperations.time(1);
-        System.out.println(generalOperations.getCurrentTime().getTime());
-        System.out.println(orderOperations.getLocation(1));
-        
-        generalOperations.time(1);
-        System.out.println(generalOperations.getCurrentTime().getTime());
-        System.out.println(orderOperations.getLocation(1));
-        
-        generalOperations.time(7);
-        System.out.println(generalOperations.getCurrentTime().getTime());
-        System.out.println(orderOperations.getLocation(1));*/
-        
+
         /*for(int i = 0; i < 25; i ++) {
         	generalOperations.time(1);
         	

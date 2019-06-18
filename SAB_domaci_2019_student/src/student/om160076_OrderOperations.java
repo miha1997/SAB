@@ -278,6 +278,10 @@ public class om160076_OrderOperations implements OrderOperations {
         	rs.next();
         	
         	Calendar cal = Calendar.getInstance();
+        	
+        	if(rs.getDate(1) == null)
+        		return null;
+        	
         	cal.setTime(rs.getDate(1));
         	return cal;
          
@@ -301,6 +305,10 @@ public class om160076_OrderOperations implements OrderOperations {
         	rs.next();
         	
         	Calendar cal = Calendar.getInstance();
+        	
+        	if(rs.getDate(1) == null)
+        		return null;
+        	
         	cal.setTime(rs.getDate(1));
         	return cal;
          

@@ -27,6 +27,23 @@ public class om160076_GeneralOperations implements GeneralOperations {
 		Timer timer = Timer.getTimer();
 		
 		timer.setTime(time);
+		
+		Connection connection=DB.getInstance().getConnection();
+        String setDate="insert into TrenutniDatum values (?)";
+        String setSum="insert into ProfitSistema values (0)";
+        
+        try(Statement statement = connection.createStatement();
+        	PreparedStatement pUpdate = connection.prepareStatement(setDate);){
+        	
+        	statement.executeUpdate(setSum);       	
+        	pUpdate.setDate(1, new java.sql.Date(timer.getTime().getTimeInMillis()));
+        	pUpdate.executeUpdate();
+        	
+        	
+        } catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -62,6 +79,9 @@ public class om160076_GeneralOperations implements GeneralOperations {
         String deleteCity="delete from Grad";
         String deleteT="delete from Transakcija";
         
+        String deleteDatum="delete from TrenutniDatum";
+        String setProfit="update ProfitSistema set Suma = 0";
+        
         String seed="DBCC CHECKIDENT ('Grad', RESEED, 0); DBCC CHECKIDENT ('NaplataKupac', RESEED, 0);" +
         		"DBCC CHECKIDENT ('NaplataProdavnica', RESEED, 0);DBCC CHECKIDENT ('Stavka', RESEED, 0);" +
         		"DBCC CHECKIDENT ('Artikal', RESEED, 0); DBCC CHECKIDENT ('Narudzbina', RESEED, 0);" +
@@ -80,12 +100,14 @@ public class om160076_GeneralOperations implements GeneralOperations {
         	statement.executeUpdate(deleteItem);
         	statement.executeUpdate(deleteArticle);
         	statement.executeUpdate(deleteT);
+        	statement.executeUpdate(deleteDatum);
         	
         	statement.executeUpdate(deleteOrder);
         	statement.executeUpdate(deletePath);
         	statement.executeUpdate(deleteBuyer);
         	statement.executeUpdate(deleteShop);
         	statement.executeUpdate(deleteCity);
+        	statement.executeUpdate(setProfit);
         	
         	statement.executeUpdate(seed);
 	

@@ -78,7 +78,7 @@ public class om160076_ShopOperations implements ShopOperations {
            		return -1;
            	return 1;
         } catch (SQLException ex) {
-            Logger.getLogger(om160076_ShopOperations.class.getName()).log(Level.SEVERE, null, ex);
+            //Logger.getLogger(om160076_ShopOperations.class.getName()).log(Level.SEVERE, null, ex);
             return -1;
         }
 	}

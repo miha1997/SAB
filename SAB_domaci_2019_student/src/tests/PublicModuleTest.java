@@ -141,10 +141,10 @@ public class PublicModuleTest {
         Assert.assertEquals(amountWithoutDiscounts.subtract(amountWithDiscounts), orderOperations.getDiscountSum(order));
 
         Assert.assertEquals(amountWithDiscounts, transactionOperations.getBuyerTransactionsAmmount(buyer));
-        Assert.assertNull(transactionOperations.getShopTransactionsAmmount(shopA));
-        Assert.assertNull(transactionOperations.getShopTransactionsAmmount(shopC2));
-        Assert.assertNull(transactionOperations.getShopTransactionsAmmount(shopC3));
-        Assert.assertEquals(new BigDecimal("0"), transactionOperations.getSystemProfit());
+        Assert.assertEquals(transactionOperations.getShopTransactionsAmmount(shopA), new BigDecimal("0").setScale(3));
+        Assert.assertEquals(transactionOperations.getShopTransactionsAmmount(shopC2), new BigDecimal("0").setScale(3));
+        Assert.assertEquals(transactionOperations.getShopTransactionsAmmount(shopC3), new BigDecimal("0").setScale(3));
+        Assert.assertEquals(new BigDecimal("0").setScale(3), transactionOperations.getSystemProfit());
 
         generalOperations.time(2);
         Assert.assertEquals(initialTime, orderOperations.getSentTime(order));

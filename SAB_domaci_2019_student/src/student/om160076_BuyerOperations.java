@@ -165,6 +165,8 @@ public class om160076_BuyerOperations implements BuyerOperations {
             while(rs.next()){
             	list.add(rs.getInt(1));
             }
+            if(list.size() == 0)
+            	return null;
             
             return list;           
         } catch (SQLException ex) {

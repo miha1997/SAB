@@ -42,7 +42,8 @@ public class Graph {
 	private static Graph graph = null;
 	
 	private Graph() {
-
+		//loads graph from database if exists
+		loadGraph();
 	}
 	
 	//gets city index in array
@@ -124,6 +125,10 @@ public class Graph {
 		int buyer = getIndex(buyerCity);
 		
 		int nextCity = T.get(buyer).get(cur);
+		
+		//if it is same city
+		if(cur == buyer)
+			nextCity = cur;
 		int distance = D[cur][nextCity];		
 		
 		nextCity = ids.get(nextCity);
@@ -141,6 +146,38 @@ public class Graph {
 		res[1] = nextCity;
 		
 		return res;
+	}
+	
+	private void loadGraph() {
+		Connection connection=DB.getInstance().getConnection();
+        String getCities="select IdGrad from Grad";
+        String getRoads="select IdGradOd, IdGradDo, Cena from Put";
+        
+        try (Statement psCities = connection.createStatement();
+        	Statement psPaths = connection.createStatement();){
+        	
+        	ResultSet cities = psCities.executeQuery(getCities);
+        	ResultSet roads = psPaths.executeQuery(getRoads);
+        	
+        	while(cities.next()) {
+        		int city = cities.getInt(1);
+        		
+        		addCity(city);
+        	}
+        	
+        	while(roads.next()) {
+        		int city1 = roads.getInt(1);
+        		int city2 = roads.getInt(2);
+        		int price = roads.getInt(3);
+        		
+        		addPath(city1, city2, price);
+        	}
+        	
+        
+        } catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public int[] prepareArticles(LinkedList<Integer> cityList, int orderId) {

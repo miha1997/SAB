@@ -7,19 +7,13 @@ import student.om160076_ShopOperations;
 import student.om160076_TransactionOperations;
 import student.om16076_CityOperations;
 import student.helper.Graph;
-import student.jdbc.DB;
+import student.helper.Timer;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
-import java.util.List;
-
-import org.junit.Assert;
-import org.junit.Test;
-
 import tests.TestHandler;
 import tests.TestRunner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 
 public class StudentMain {
 
@@ -42,6 +36,52 @@ public class StudentMain {
 		graph.addPath(3, 1, -1);
 		
 		graph.print();
+	}
+	
+	private static void miniTest(
+			ArticleOperations articleOperations,
+	        BuyerOperations buyerOperations,
+	        CityOperations cityOperations,
+	        GeneralOperations generalOperations,
+	        OrderOperations orderOperations,
+	        ShopOperations shopOperations,
+	        TransactionOperations transactionOperations){
+		
+		generalOperations.eraseAll();
+		
+        Calendar initialTime = Calendar.getInstance();
+        initialTime.clear();
+        initialTime.set(2018, Calendar.JANUARY, 1);
+        generalOperations.setInitialTime(initialTime);
+        Calendar receivedTime = Calendar.getInstance();
+        receivedTime.clear();
+        receivedTime.set(2018, Calendar.JANUARY, 22);
+        
+        //System.out.println(generalOperations.getCurrentTime().getTime());
+        
+        //make network
+        int cityA = cityOperations.createCity("A");
+        int cityB = cityOperations.createCity("B");
+        
+        cityOperations.connectCities(cityB, cityA, 4);
+        int shopB = shopOperations.createShop("shopB", "B");
+        
+        int laptop = articleOperations.createArticle(shopB, "laptop", 1000);
+        shopOperations.increaseArticleCount(laptop, 10);
+
+        int buyer = buyerOperations.createBuyer("kupac", cityA);
+        buyerOperations.increaseCredit(buyer, new BigDecimal("20000"));
+        int order = buyerOperations.createOrder(buyer);
+        orderOperations.addArticle(order, laptop, 5);
+        orderOperations.completeOrder(order);
+        
+        for(int i = 0; i < 5; i++) {
+        	System.out.println("grad " +  orderOperations.getLocation(order));
+        	System.out.println("dan " + Timer.getTimer().getTime().get(Calendar.DAY_OF_MONTH));
+        	System.out.println();
+        	Timer.getTimer().passDay();
+        }
+        
 	}
 	
 	private static void test(
@@ -246,6 +286,8 @@ public class StudentMain {
 
     }
 	
+	
+	
     public static void main(String[] args) {
 
         ArticleOperations articleOperations = new om160076_ArticleOperations(); 
@@ -255,6 +297,8 @@ public class StudentMain {
         OrderOperations orderOperations = new om160076_OrderOperations();
         ShopOperations shopOperations = new om160076_ShopOperations();
         TransactionOperations transactionOperations = new om160076_TransactionOperations();
+        
+        //miniTest(articleOperations, buyerOperations, cityOperations, generalOperations, orderOperations, shopOperations, transactionOperations);
         
         //test(articleOperations, buyerOperations, cityOperations, generalOperations, orderOperations, shopOperations, transactionOperations);
         //generalOperations.time(21);

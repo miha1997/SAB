@@ -180,7 +180,7 @@ public class om160076_TransactionOperations implements TransactionOperations {
 	@Override
 	public BigDecimal getAmmountThatBuyerPayedForOrder(int orderId) {
 		Connection connection=DB.getInstance().getConnection();
-        String getSum="select t.Iznos from NaplataKupaca as n, Transakcija as t where IdNarudzbina = ? and n.IdNaplata = t.IdTransakcija";
+        String getSum="select t.Iznos from NaplataKupac as n, Transakcija as t where IdNarudzbina = ? and n.IdNaplata = t.IdTransakcija";
         
         try ( Statement statement=connection.createStatement();
         	PreparedStatement psSelect=connection.prepareStatement(getSum);){
@@ -189,11 +189,11 @@ public class om160076_TransactionOperations implements TransactionOperations {
         	ResultSet rs = psSelect.executeQuery();
         	
         	if(!rs.next())
-        		return new BigDecimal(0).setScale(3);
+        		return new BigDecimal(-1).setScale(3);
         	
 			return BigDecimal.valueOf(rs.getFloat(1)).setScale(3);         
         } catch (SQLException ex) {
-            //Logger.getLogger(om160076_TransactionOperations.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(om160076_TransactionOperations.class.getName()).log(Level.SEVERE, null, ex);
         	return new BigDecimal(-1).setScale(3);
         }
 	}

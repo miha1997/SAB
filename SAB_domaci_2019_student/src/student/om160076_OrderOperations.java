@@ -137,6 +137,10 @@ public class om160076_OrderOperations implements OrderOperations {
 	public int completeOrder(int orderId) {
 		Connection connection=DB.getInstance().getConnection();
         String getOrder="select IdNarudzbina from Narudzbina where IdNarudzbina = ?";
+        String getBuyerCity="select k.IdGrad from Kupac as k, Narudzbina as n where n.IdNarudzbina = ? and n.IdKupac= k.IdKupac";
+        String arrive="update Narudzbina set Status = 'arrived' where IdNarudzbina = ?";
+        
+        
         String getCities="SELECT DISTINCT (p.IdGrad)\r\n" + 
         		"	from Artikal as a, Stavka as s, Prodavnica as p\r\n" + 
         		"	where s.IdNarudzbina = ?" + 
@@ -144,7 +148,8 @@ public class om160076_OrderOperations implements OrderOperations {
         		"	and a.IdProdavnica = p.IdProdavnica";
         String updateOrder="update Narudzbina set Status = 'sent', Progres = 0, DatumSlanja = ?, TrenutniGrad = ?, DatumSastavljanja = ? where IdNarudzbina = ?";	
         
-        try ( Statement statement=connection.createStatement();
+        try (PreparedStatement selectBuyerCity=connection.prepareStatement(getBuyerCity);
+        	PreparedStatement updateArrive=connection.prepareStatement(arrive);
         	PreparedStatement psSelect=connection.prepareStatement(getOrder);
         	PreparedStatement pUpdate=connection.prepareStatement(updateOrder);
         	PreparedStatement psCities=connection.prepareStatement(getCities);){
@@ -168,7 +173,10 @@ public class om160076_OrderOperations implements OrderOperations {
         	while( cities.next()) {
         		cityList.add(cities.getInt(1));
         	}
-            
+            //if there are no cities than order is invalid
+        	if(cityList.size() == 0)
+        		return -1;
+        	
         	Graph graph = Graph.getGraph();
         	int shopCity;
         	int ready;
@@ -182,6 +190,7 @@ public class om160076_OrderOperations implements OrderOperations {
         	Timer timer = Timer.getTimer();
         	Calendar calendar = (Calendar) timer.getTime().clone();
         	
+        	//System.out.println(calendar.getTime());
         	
         	pUpdate.setDate(1, new java.sql.Date(calendar.getTimeInMillis()));
         	pUpdate.setInt(2, shopCity);
@@ -193,12 +202,24 @@ public class om160076_OrderOperations implements OrderOperations {
             
         	pUpdate.executeUpdate();
         	
+        	selectBuyerCity.setInt(1, orderId);
+        	ResultSet rs1 = selectBuyerCity.executeQuery();
+        	
+        	rs1.next();
+        	int buyerCity = rs1.getInt(1);
+        	
+        	//if it is all in same city
+        	if(ready == 0 && buyerCity == shopCity) {
+        		updateArrive.setInt(1, orderId);
+        		updateArrive.executeUpdate();
+        	}
             return 1;
             
-        } catch (SQLException ex) {
-            Logger.getLogger(om160076_OrderOperations.class.getName()).log(Level.SEVERE, null, ex);
-        	return -1;
-        }
+        } catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return -1;
+		} 
 			
 	}
 
@@ -214,7 +235,7 @@ public class om160076_OrderOperations implements OrderOperations {
         	ResultSet rs = psSelect.executeQuery();
         	
         	if(!rs.next())
-        		return new BigDecimal(0).setScale(3);
+        		return new BigDecimal(-1).setScale(3);
         	
 			return BigDecimal.valueOf(rs.getFloat(1)).setScale(3);         
         } catch (SQLException ex) {

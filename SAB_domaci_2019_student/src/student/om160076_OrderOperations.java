@@ -2,17 +2,12 @@ package student;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
-import java.util.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import operations.OrderOperations;
 import student.helper.Graph;
@@ -30,8 +25,7 @@ public class om160076_OrderOperations implements OrderOperations {
 		String updateItem="update Stavka set Kolicina = Kolicina + ? where IdArtikal = ? and IdNarudzbina = ?";		
         String insertItem="insert into Stavka values(?,?,?)";
        
-        try ( Statement statement=connection.createStatement();
-        	PreparedStatement psGetCount=connection.prepareStatement(getCount);
+        try (PreparedStatement psGetCount=connection.prepareStatement(getCount);
         	PreparedStatement psUpdateArticle=connection.prepareStatement(updateArticle);
         	PreparedStatement psUpdateItem=connection.prepareStatement(updateItem);
         	PreparedStatement psItemId=connection.prepareStatement(getItemId);
@@ -81,7 +75,7 @@ public class om160076_OrderOperations implements OrderOperations {
            	}
             
         } catch (SQLException ex) {
-            //Logger.getLogger(om160076_OrderOperations.class.getName()).log(Level.SEVERE, null, ex);
+        	//ex.printStackTrace();
             return -1;
         }
 	}
@@ -91,8 +85,7 @@ public class om160076_OrderOperations implements OrderOperations {
 		Connection connection=DB.getInstance().getConnection();
 		String deleteItem="delete from Stavka where IdArtikal = ? and IdNarudzbina = ?";
         
-        try ( Statement statement=connection.createStatement();
-        	PreparedStatement psDeleteItem=connection.prepareStatement(deleteItem);){
+        try (PreparedStatement psDeleteItem=connection.prepareStatement(deleteItem);){
         	
         	psDeleteItem.setInt(1, articleId);
         	psDeleteItem.setInt(2, orderId);       	
@@ -104,7 +97,7 @@ public class om160076_OrderOperations implements OrderOperations {
             return 1;
             
         } catch (SQLException ex) {
-            //Logger.getLogger(om160076_OrderOperations.class.getName()).log(Level.SEVERE, null, ex);
+        	//ex.printStackTrace();
             return -1;
         }
 	}
@@ -114,8 +107,7 @@ public class om160076_OrderOperations implements OrderOperations {
 		Connection connection=DB.getInstance().getConnection();
         String getAllItems="select IdStavka from Stavka where IdNarudzbina = ?";
         
-        try ( Statement statement=connection.createStatement();
-        	PreparedStatement psSelect=connection.prepareStatement(getAllItems);){
+        try (PreparedStatement psSelect=connection.prepareStatement(getAllItems);){
         	
         	psSelect.setInt(1, orderId);
         	ResultSet rs = psSelect.executeQuery();
@@ -128,7 +120,7 @@ public class om160076_OrderOperations implements OrderOperations {
             
             return list;           
         } catch (SQLException ex) {
-            //Logger.getLogger(om160076_OrderOperations.class.getName()).log(Level.SEVERE, null, ex);
+        	//ex.printStackTrace();
         	return new LinkedList<Integer>();
         }
 	}
@@ -217,7 +209,7 @@ public class om160076_OrderOperations implements OrderOperations {
             
         } catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			///e.printStackTrace();
 			return -1;
 		} 
 			
@@ -226,10 +218,9 @@ public class om160076_OrderOperations implements OrderOperations {
 	@Override
 	public BigDecimal getFinalPrice(int orderId) {
 		Connection connection=DB.getInstance().getConnection();
-        String getSum="select Popust from Narudzbina where IdNarudzbina = ?  and Status != 'created'";
+        String getSum="select SaPopustom from Narudzbina where IdNarudzbina = ?  and Status != 'created'";
         
-        try ( Statement statement=connection.createStatement();
-        	PreparedStatement psSelect=connection.prepareStatement(getSum);){
+        try (PreparedStatement psSelect=connection.prepareStatement(getSum);){
         	
         	psSelect.setInt(1, orderId);
         	ResultSet rs = psSelect.executeQuery();
@@ -239,7 +230,7 @@ public class om160076_OrderOperations implements OrderOperations {
         	
 			return BigDecimal.valueOf(rs.getFloat(1)).setScale(3);         
         } catch (SQLException ex) {
-            //Logger.getLogger(om160076_OrderOperations.class.getName()).log(Level.SEVERE, null, ex);
+        	//ex.printStackTrace();
         	return new BigDecimal(-1).setScale(3);
         }
 	}
@@ -247,10 +238,9 @@ public class om160076_OrderOperations implements OrderOperations {
 	@Override
 	public BigDecimal getDiscountSum(int orderId) {
 		Connection connection=DB.getInstance().getConnection();
-        String getSum="select Suma - Popust from Narudzbina where IdNarudzbina = ?  and Status != 'created'";
+        String getSum="select Suma - SaPopustom from Narudzbina where IdNarudzbina = ?  and Status != 'created'";
         
-        try ( Statement statement=connection.createStatement();
-        	PreparedStatement psSelect=connection.prepareStatement(getSum);){
+        try (PreparedStatement psSelect=connection.prepareStatement(getSum);){
         	
         	psSelect.setInt(1, orderId);
         	ResultSet rs = psSelect.executeQuery();
@@ -260,7 +250,7 @@ public class om160076_OrderOperations implements OrderOperations {
         	
 			return BigDecimal.valueOf(rs.getFloat(1)).setScale(3);         
         } catch (SQLException ex) {
-            //Logger.getLogger(om160076_OrderOperations.class.getName()).log(Level.SEVERE, null, ex);
+        	//ex.printStackTrace();
         	return new BigDecimal(-1).setScale(3);
         }
 	}
@@ -270,8 +260,7 @@ public class om160076_OrderOperations implements OrderOperations {
 		Connection connection=DB.getInstance().getConnection();
         String getStatus="select Status from Narudzbina where IdNarudzbina = ?";
         
-        try ( Statement statement=connection.createStatement();
-        	PreparedStatement psSelect=connection.prepareStatement(getStatus);){
+        try (PreparedStatement psSelect=connection.prepareStatement(getStatus);){
         	
         	psSelect.setInt(1, orderId);
         	ResultSet rs = psSelect.executeQuery();
@@ -280,7 +269,7 @@ public class om160076_OrderOperations implements OrderOperations {
         	return rs.getString(1);
          
         } catch (SQLException ex) {
-            //Logger.getLogger(om160076_OrderOperations.class.getName()).log(Level.SEVERE, null, ex);
+        	//ex.printStackTrace();
         	return "";
         }
 	}
@@ -290,8 +279,7 @@ public class om160076_OrderOperations implements OrderOperations {
 		Connection connection=DB.getInstance().getConnection();
         String getDate="select DatumSlanja from Narudzbina where IdNarudzbina = ?";
         
-        try ( Statement statement=connection.createStatement();
-        	PreparedStatement psSelect=connection.prepareStatement(getDate);){
+        try (PreparedStatement psSelect=connection.prepareStatement(getDate);){
         	
         	psSelect.setInt(1, orderId);
         	ResultSet rs = psSelect.executeQuery();
@@ -307,7 +295,7 @@ public class om160076_OrderOperations implements OrderOperations {
         	return cal;
          
         } catch (SQLException ex) {
-            //Logger.getLogger(om160076_OrderOperations.class.getName()).log(Level.SEVERE, null, ex);
+        	//ex.printStackTrace();
         	return null;
         }
 	}
@@ -317,8 +305,7 @@ public class om160076_OrderOperations implements OrderOperations {
 		Connection connection=DB.getInstance().getConnection();
         String getDate="select DatumStizanja from Narudzbina where IdNarudzbina = ?";
         
-        try ( Statement statement=connection.createStatement();
-        	PreparedStatement psSelect=connection.prepareStatement(getDate);){
+        try (PreparedStatement psSelect=connection.prepareStatement(getDate);){
         	
         	psSelect.setInt(1, orderId);
         	ResultSet rs = psSelect.executeQuery();
@@ -334,7 +321,7 @@ public class om160076_OrderOperations implements OrderOperations {
         	return cal;
          
         } catch (SQLException ex) {
-            //Logger.getLogger(om160076_OrderOperations.class.getName()).log(Level.SEVERE, null, ex);
+        	//ex.printStackTrace();
         	return null;
         }
 	}
@@ -344,8 +331,7 @@ public class om160076_OrderOperations implements OrderOperations {
 		Connection connection=DB.getInstance().getConnection();
 		String getBuyer="select IdKupac from Narudzbina where IdNarudzbina = ?";
         
-        try ( Statement statement=connection.createStatement();
-        	PreparedStatement psSelect=connection.prepareStatement(getBuyer);){
+        try (PreparedStatement psSelect=connection.prepareStatement(getBuyer);){
         	
         	psSelect.setInt(1, orderId);
             ResultSet rs = psSelect.executeQuery();
@@ -357,7 +343,7 @@ public class om160076_OrderOperations implements OrderOperations {
             return rs.getInt(1);
             
         } catch (SQLException ex) {
-            //Logger.getLogger(om160076_OrderOperations.class.getName()).log(Level.SEVERE, null, ex);
+        	//ex.printStackTrace();
             return -1;
         }
 	}
@@ -367,8 +353,7 @@ public class om160076_OrderOperations implements OrderOperations {
 		Connection connection=DB.getInstance().getConnection();
 		String getCity="select TrenutniGrad from Narudzbina where IdNarudzbina = ?";
         
-        try ( Statement statement=connection.createStatement();
-        	PreparedStatement psSelect=connection.prepareStatement(getCity);){
+        try (PreparedStatement psSelect=connection.prepareStatement(getCity);){
         	
         	psSelect.setInt(1, orderId);
             ResultSet rs = psSelect.executeQuery();
@@ -380,7 +365,7 @@ public class om160076_OrderOperations implements OrderOperations {
             return rs.getInt(1);
             
         } catch (SQLException ex) {
-            //Logger.getLogger(om160076_OrderOperations.class.getName()).log(Level.SEVERE, null, ex);
+        	//ex.printStackTrace();
             return -2;
         }
 	}

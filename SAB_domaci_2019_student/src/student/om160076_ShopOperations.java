@@ -1,12 +1,9 @@
 package student;
 
 import java.sql.Connection;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -21,8 +18,7 @@ public class om160076_ShopOperations implements ShopOperations {
 		String getCity="select IdGrad from Grad where Naziv = ?";
         String insertQuery="insert into Prodavnica values(?,?,?)";
         
-        try ( Statement statement=connection.createStatement();
-        	PreparedStatement psSelect=connection.prepareStatement(getCity);
+        try (PreparedStatement psSelect=connection.prepareStatement(getCity);
             PreparedStatement psInsert=connection.prepareStatement(insertQuery, PreparedStatement.RETURN_GENERATED_KEYS);){
         	
         	psSelect.setString(1, cityName);
@@ -44,7 +40,7 @@ public class om160076_ShopOperations implements ShopOperations {
             rs.next();
             return rs.getInt(1);
         } catch (SQLException ex) {
-            //Logger.getLogger(om160076_ShopOperations.class.getName()).log(Level.SEVERE, null, ex);
+        	//ex.printStackTrace();
             return -1;
         }
 	}
@@ -55,8 +51,7 @@ public class om160076_ShopOperations implements ShopOperations {
 		String getCity="select IdGrad from Grad where Naziv = ?";
         String updateQuery="update Prodavnica set IdGrad = ? where IdProdavnica = ?";
         
-        try ( Statement statement=connection.createStatement();
-        	PreparedStatement psSelect=connection.prepareStatement(getCity);
+        try (PreparedStatement psSelect=connection.prepareStatement(getCity);
             PreparedStatement psUpdate=connection.prepareStatement(updateQuery);){
         	
         	psSelect.setString(1, cityName);
@@ -78,7 +73,7 @@ public class om160076_ShopOperations implements ShopOperations {
            		return -1;
            	return 1;
         } catch (SQLException ex) {
-            //Logger.getLogger(om160076_ShopOperations.class.getName()).log(Level.SEVERE, null, ex);
+        	//ex.printStackTrace();
             return -1;
         }
 	}
@@ -88,8 +83,7 @@ public class om160076_ShopOperations implements ShopOperations {
 		Connection connection=DB.getInstance().getConnection();
 		String getCity="select IdGrad from Prodavnica where IdProdavnica = ?";
         
-        try ( Statement statement=connection.createStatement();
-        	PreparedStatement psSelect=connection.prepareStatement(getCity);){
+        try (PreparedStatement psSelect=connection.prepareStatement(getCity);){
         	
         	psSelect.setInt(1, shopId);
             ResultSet rs = psSelect.executeQuery();
@@ -101,7 +95,7 @@ public class om160076_ShopOperations implements ShopOperations {
             return rs.getInt(1);
             
         } catch (SQLException ex) {
-            //Logger.getLogger(om160076_ShopOperations.class.getName()).log(Level.SEVERE, null, ex);
+        	//ex.printStackTrace();
             return -1;
         }
 	}
@@ -114,8 +108,7 @@ public class om160076_ShopOperations implements ShopOperations {
 		Connection connection=DB.getInstance().getConnection();
         String updateQuery="update Prodavnica set Popust = ? where IdProdavnica = ?";
         
-        try ( Statement statement=connection.createStatement();
-            PreparedStatement psUpdate=connection.prepareStatement(updateQuery);){
+        try (PreparedStatement psUpdate=connection.prepareStatement(updateQuery);){
         	
             psUpdate.setFloat(1, discountPercentage);
             psUpdate.setInt(2, shopId);
@@ -126,7 +119,7 @@ public class om160076_ShopOperations implements ShopOperations {
            		return -1;
            	return 1;
         } catch (SQLException ex) {
-            Logger.getLogger(om160076_ShopOperations.class.getName()).log(Level.SEVERE, null, ex);
+        	//ex.printStackTrace();
             return -1;
         }
 	}
@@ -140,8 +133,7 @@ public class om160076_ShopOperations implements ShopOperations {
 		String getCount="select NaStanju from Artikal where IdArtikal = ?";
         String updateQuery="update Artikal set NaStanju = NaStanju + ? where IdArtikal = ?";
         
-        try ( Statement statement=connection.createStatement();
-        	PreparedStatement psSelect=connection.prepareStatement(getCount);
+        try (PreparedStatement psSelect=connection.prepareStatement(getCount);
             PreparedStatement psUpdate=connection.prepareStatement(updateQuery);){
             
             //update article
@@ -161,7 +153,7 @@ public class om160076_ShopOperations implements ShopOperations {
             return rs.getInt(1);
             
         } catch (SQLException ex) {
-            //Logger.getLogger(om160076_ShopOperations.class.getName()).log(Level.SEVERE, null, ex);
+            //ex.printStackTrace();
             return -1;
         }
 	}
@@ -171,8 +163,7 @@ public class om160076_ShopOperations implements ShopOperations {
 		Connection connection=DB.getInstance().getConnection();
 		String getCount="select NaStanju from Artikal where IdArtikal = ?";
         
-        try ( Statement statement=connection.createStatement();
-        	PreparedStatement psSelect=connection.prepareStatement(getCount);){
+        try (PreparedStatement psSelect=connection.prepareStatement(getCount);){
         	
         	psSelect.setInt(1, articleId);
            	ResultSet rs = psSelect.executeQuery();
@@ -182,7 +173,7 @@ public class om160076_ShopOperations implements ShopOperations {
             return rs.getInt(1);
             
         } catch (SQLException ex) {
-            //Logger.getLogger(om160076_ShopOperations.class.getName()).log(Level.SEVERE, null, ex);
+            //ex.printStackTrace();
             return -1;
         }
 	}
@@ -192,8 +183,7 @@ public class om160076_ShopOperations implements ShopOperations {
 		Connection connection=DB.getInstance().getConnection();
         String getAllArticles="select IdArtikal from Artikal where IdProdavnica = ?";
         
-        try ( Statement statement=connection.createStatement();
-        	PreparedStatement psSelect=connection.prepareStatement(getAllArticles);){
+        try (PreparedStatement psSelect=connection.prepareStatement(getAllArticles);){
         	
         	psSelect.setInt(1, shopId);
         	ResultSet rs = psSelect.executeQuery();
@@ -206,7 +196,7 @@ public class om160076_ShopOperations implements ShopOperations {
             
             return list;           
         } catch (SQLException ex) {
-            //Logger.getLogger(om160076_ShopOperations.class.getName()).log(Level.SEVERE, null, ex);
+            //ex.printStackTrace();
         	return null;
         }
 	}
@@ -216,8 +206,7 @@ public class om160076_ShopOperations implements ShopOperations {
 		Connection connection=DB.getInstance().getConnection();
 		String getCity="select Popust from Prodavnica where IdProdavnica = ?";
         
-        try ( Statement statement=connection.createStatement();
-        	PreparedStatement psSelect=connection.prepareStatement(getCity);){
+        try (PreparedStatement psSelect=connection.prepareStatement(getCity);){
         	
         	psSelect.setInt(1, shopId);
             ResultSet rs = psSelect.executeQuery();
@@ -229,7 +218,7 @@ public class om160076_ShopOperations implements ShopOperations {
             return rs.getInt(1);
             
         } catch (SQLException ex) {
-            //Logger.getLogger(om160076_ShopOperations.class.getName()).log(Level.SEVERE, null, ex);
+            //ex.printStackTrace();
             return -1;
         }
 	}

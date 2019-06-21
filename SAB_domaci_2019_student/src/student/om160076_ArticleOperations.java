@@ -4,10 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import operations.ArticleOperations;
 import student.jdbc.DB;
@@ -19,8 +15,7 @@ public class om160076_ArticleOperations implements ArticleOperations {
 		Connection connection=DB.getInstance().getConnection();
         String insertQuery="insert into Artikal values(?,?,?,?)";
         
-        try ( Statement statement=connection.createStatement();
-            PreparedStatement psInsert=connection.prepareStatement(insertQuery, PreparedStatement.RETURN_GENERATED_KEYS);){
+        try (PreparedStatement psInsert=connection.prepareStatement(insertQuery, PreparedStatement.RETURN_GENERATED_KEYS);){
         	
         	//insert new article
             psInsert.setString(1, articleName);
@@ -33,7 +28,7 @@ public class om160076_ArticleOperations implements ArticleOperations {
             rs.next();
             return rs.getInt(1);
         } catch (SQLException ex) {
-            //Logger.getLogger(om160076_ArticleOperations.class.getName()).log(Level.SEVERE, null, ex);
+        	//ex.printStackTrace();
             return -1;
         }
 	}

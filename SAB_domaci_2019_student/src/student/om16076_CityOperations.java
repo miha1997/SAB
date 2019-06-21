@@ -7,8 +7,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import operations.CityOperations;
 import student.helper.Graph;
@@ -22,8 +20,7 @@ public class om16076_CityOperations implements CityOperations {
 		Connection connection=DB.getInstance().getConnection();
         String insertQuery="insert into Grad values(?)";
         
-        try ( Statement statement=connection.createStatement();
-            PreparedStatement ps=connection.prepareStatement(insertQuery, PreparedStatement.RETURN_GENERATED_KEYS);){
+        try (PreparedStatement ps=connection.prepareStatement(insertQuery, PreparedStatement.RETURN_GENERATED_KEYS);){
 
             ps.setString(1, name);
             ps.executeUpdate();
@@ -38,7 +35,7 @@ public class om16076_CityOperations implements CityOperations {
             return cityId;
             
         } catch (SQLException ex) {
-            //Logger.getLogger(om16076_CityOperations.class.getName()).log(Level.SEVERE, null, ex);
+            //ex.printStackTrace();
             return -1;
         }
 	}
@@ -61,7 +58,7 @@ public class om16076_CityOperations implements CityOperations {
             
             return list;           
         } catch (SQLException ex) {
-            //Logger.getLogger(om16076_CityOperations.class.getName()).log(Level.SEVERE, null, ex);
+            //ex.printStackTrace();
         }
 		return null;
 	}
@@ -76,8 +73,7 @@ public class om16076_CityOperations implements CityOperations {
         String checkRoad="select count(*) from Put where \r\n" + 
         		"(IdGradDo = ? and IdGradOd = ?) or (IdGradDo = ? and IdGradOd = ?)";
         
-        try ( Statement statement=connection.createStatement();
-        	PreparedStatement psSelect=connection.prepareStatement(checkRoad);
+        try (PreparedStatement psSelect=connection.prepareStatement(checkRoad);
             PreparedStatement psInsert=connection.prepareStatement(insertQuery, PreparedStatement.RETURN_GENERATED_KEYS);){
         	
         	//check if road already exists
@@ -106,25 +102,57 @@ public class om16076_CityOperations implements CityOperations {
             return rs.getInt(1);
             
         } catch (SQLException ex) {
-            //Logger.getLogger(om16076_CityOperations.class.getName()).log(Level.SEVERE, null, ex);
+            //ex.printStackTrace();
             return -1;
         }
 	}
 
 	@Override
 	public List<Integer> getConnectedCities(int cityId) {
-		Graph graph = Graph.getGraph();
+		//Graph graph = Graph.getGraph();
+		//return graph.getConnectedCities(cityId);
 		
-		return graph.getConnectedCities(cityId);
+		Connection connection=DB.getInstance().getConnection();
+        String getCities1="select IdGradDo from Put where IdGradOd = ?";
+        String getCities2="select IdGradOd from Put where IdGradDo = ?";
+        
+        try (PreparedStatement psSelect1=connection.prepareStatement(getCities1);
+        	PreparedStatement psSelect2=connection.prepareStatement(getCities2);){
+        	
+        	psSelect1.setInt(1, cityId);
+        	ResultSet rs = psSelect1.executeQuery();
+        	
+        	List<Integer> list = new LinkedList<Integer>();
+        	
+            while(rs.next()){
+            	list.add(rs.getInt(1));
+            }
+            
+            psSelect2.setInt(1, cityId);
+        	rs = psSelect2.executeQuery();
+        	
+            while(rs.next()){
+            	list.add(rs.getInt(1));
+            }
+            
+            if(list.size() == 0)
+            	return null;
+            
+            return list;           
+        } catch (SQLException ex) {
+            //ex.printStackTrace();
+        }
+		return null;
 	}
+		
+	
 
 	@Override
 	public List<Integer> getShops(int cityId) {
 		Connection connection=DB.getInstance().getConnection();
         String getAllShops="select IdProdavnica from Prodavnica where IdGrad = ?";
         
-        try ( Statement statement=connection.createStatement();
-        	PreparedStatement psSelect=connection.prepareStatement(getAllShops);){
+        try (PreparedStatement psSelect=connection.prepareStatement(getAllShops);){
         	
         	psSelect.setInt(1, cityId);
         	ResultSet rs = psSelect.executeQuery();
@@ -140,7 +168,7 @@ public class om16076_CityOperations implements CityOperations {
             
             return list;           
         } catch (SQLException ex) {
-            //Logger.getLogger(om16076_CityOperations.class.getName()).log(Level.SEVERE, null, ex);
+            //ex.printStackTrace();
         }
 		return null;
 	}

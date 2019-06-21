@@ -5,7 +5,6 @@ package student;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Calendar;
@@ -14,8 +13,6 @@ import operations.GeneralOperations;
 import student.helper.Graph;
 import student.helper.Timer;
 import student.jdbc.DB;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 /**
  * @author Mihailo
  *
@@ -42,7 +39,7 @@ public class om160076_GeneralOperations implements GeneralOperations {
         	
         } catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 	}
 
@@ -112,7 +109,7 @@ public class om160076_GeneralOperations implements GeneralOperations {
         	statement.executeUpdate(seed);
 	
         } catch (SQLException ex) {
-            Logger.getLogger(om160076_GeneralOperations.class.getName()).log(Level.SEVERE, null, ex);
+        	//ex.printStackTrace();
            
         }
 

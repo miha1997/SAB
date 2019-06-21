@@ -5,12 +5,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.LinkedList;
 import java.util.List;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import operations.BuyerOperations;
 import student.jdbc.DB;
@@ -23,8 +20,7 @@ public class om160076_BuyerOperations implements BuyerOperations {
         String insertBuyer="insert into Kupac values(?,?)";
         String insertAcc="insert into Racun values(?,?)";
         
-        try ( Statement statement=connection.createStatement();
-        	PreparedStatement psAcc=connection.prepareStatement(insertAcc);
+        try (PreparedStatement psAcc=connection.prepareStatement(insertAcc);
             PreparedStatement psBuyer=connection.prepareStatement(insertBuyer, PreparedStatement.RETURN_GENERATED_KEYS);){
         	            
         	//insert new buyer
@@ -42,7 +38,7 @@ public class om160076_BuyerOperations implements BuyerOperations {
             
         	return buyerId;
         } catch (SQLException ex) {
-            //Logger.getLogger(om160076_BuyerOperations.class.getName()).log(Level.SEVERE, null, ex);
+        	//ex.printStackTrace();
             return -1;
         }
 	}
@@ -52,8 +48,7 @@ public class om160076_BuyerOperations implements BuyerOperations {
 		Connection connection=DB.getInstance().getConnection();
         String updateQuery="update Kupac set IdGrad = ? where IdKupac = ?";
         
-        try ( Statement statement=connection.createStatement();
-            PreparedStatement psUpdate=connection.prepareStatement(updateQuery);){
+        try (PreparedStatement psUpdate=connection.prepareStatement(updateQuery);){
             
             //update buyer
             psUpdate.setInt(1, cityId);
@@ -65,7 +60,7 @@ public class om160076_BuyerOperations implements BuyerOperations {
            		return -1;
            	return 1;
         } catch (SQLException ex) {
-            //Logger.getLogger(om160076_BuyerOperations.class.getName()).log(Level.SEVERE, null, ex);
+        	//ex.printStackTrace();
             return -1;
         }
 	}
@@ -75,8 +70,7 @@ public class om160076_BuyerOperations implements BuyerOperations {
 		Connection connection=DB.getInstance().getConnection();
 		String getCity="select IdGrad from Kupac where IdKupac = ?";
         
-        try ( Statement statement=connection.createStatement();
-        	PreparedStatement psSelect=connection.prepareStatement(getCity);){
+        try (PreparedStatement psSelect=connection.prepareStatement(getCity);){
         	
         	psSelect.setInt(1, buyerId);
             ResultSet rs = psSelect.executeQuery();
@@ -88,7 +82,7 @@ public class om160076_BuyerOperations implements BuyerOperations {
             return rs.getInt(1);
             
         } catch (SQLException ex) {
-            //Logger.getLogger(om160076_BuyerOperations.class.getName()).log(Level.SEVERE, null, ex);
+        	//ex.printStackTrace();
             return -1;
         }
 	}
@@ -102,8 +96,7 @@ public class om160076_BuyerOperations implements BuyerOperations {
 		String getCount="select Stanje from Racun where IdKupac = ?";
         String updateQuery="update Racun set Stanje = Stanje + ? where IdKupac = ?";
         
-        try ( Statement statement=connection.createStatement();
-        	PreparedStatement psSelect=connection.prepareStatement(getCount);
+        try (PreparedStatement psSelect=connection.prepareStatement(getCount);
             PreparedStatement psUpdate=connection.prepareStatement(updateQuery);){
             
            	psUpdate.setDouble(1, credit.floatValue());
@@ -122,7 +115,7 @@ public class om160076_BuyerOperations implements BuyerOperations {
 			return BigDecimal.valueOf(rs.getFloat(1)).setScale(3);
             
         } catch (SQLException ex) {
-            //Logger.getLogger(om160076_BuyerOperations.class.getName()).log(Level.SEVERE, null, ex);
+        	//ex.printStackTrace();
             return new BigDecimal(-1).setScale(3);
         }
 	}
@@ -132,8 +125,7 @@ public class om160076_BuyerOperations implements BuyerOperations {
 		Connection connection=DB.getInstance().getConnection();
         String insertOrder="insert into Narudzbina values('created',?,null,null,null,-1,null,null, null, null)";
         
-        try ( Statement statement=connection.createStatement();
-            PreparedStatement psOrder=connection.prepareStatement(insertOrder, PreparedStatement.RETURN_GENERATED_KEYS);){
+        try (PreparedStatement psOrder=connection.prepareStatement(insertOrder, PreparedStatement.RETURN_GENERATED_KEYS);){
         	            
         	//insert new order
         	psOrder.setInt(1, buyerId);
@@ -144,7 +136,7 @@ public class om160076_BuyerOperations implements BuyerOperations {
             return rs.getInt(1);
             
         } catch (SQLException ex) {
-            //Logger.getLogger(om160076_BuyerOperations.class.getName()).log(Level.SEVERE, null, ex);
+        	//ex.printStackTrace();
             return -1;
         }
 	}
@@ -154,8 +146,7 @@ public class om160076_BuyerOperations implements BuyerOperations {
 		Connection connection=DB.getInstance().getConnection();
         String getAllOrders="select IdNarudzbina from Narudzbina where IdKupac = ?";
         
-        try ( Statement statement=connection.createStatement();
-        	PreparedStatement psSelect=connection.prepareStatement(getAllOrders);){
+        try (PreparedStatement psSelect=connection.prepareStatement(getAllOrders);){
         	
         	psSelect.setInt(1, buyerId);
         	ResultSet rs = psSelect.executeQuery();
@@ -170,7 +161,7 @@ public class om160076_BuyerOperations implements BuyerOperations {
             
             return list;           
         } catch (SQLException ex) {
-            //Logger.getLogger(om160076_BuyerOperations.class.getName()).log(Level.SEVERE, null, ex);
+        	//ex.printStackTrace();
         	return new LinkedList<Integer>();
         }
 	}
@@ -180,8 +171,7 @@ public class om160076_BuyerOperations implements BuyerOperations {
 		Connection connection=DB.getInstance().getConnection();
 		String getCount="select Stanje from Racun where IdKupac = ?";
         
-        try ( Statement statement=connection.createStatement();
-        	PreparedStatement psSelect=connection.prepareStatement(getCount);){
+        try (PreparedStatement psSelect=connection.prepareStatement(getCount);){
            	
            	psSelect.setInt(1, buyerId);
            	ResultSet rs = psSelect.executeQuery();
@@ -190,7 +180,7 @@ public class om160076_BuyerOperations implements BuyerOperations {
 			return BigDecimal.valueOf(rs.getFloat(1)).setScale(3);
             
         } catch (SQLException ex) {
-            //Logger.getLogger(om160076_BuyerOperations.class.getName()).log(Level.SEVERE, null, ex);
+        	//ex.printStackTrace();
             return new BigDecimal(-1).setScale(3);
         }
 	}
